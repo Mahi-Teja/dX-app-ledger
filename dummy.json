@@ -1,0 +1,234 @@
+{
+  "user": {
+    "id": "u001",
+    "avatar": "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-Pic.png",
+    "name": "Munna",
+    "email": "munna@example.com",
+    "currency": "INR"
+  },
+  "accounts": [
+    {
+      "id": "acc001",
+      "name": "Savings Account",
+      "type": "bank",
+      "balance": 25000.0
+    },
+    {
+      "id": "acc002",
+      "name": "Cash Wallet",
+      "type": "cash",
+      "balance": 3200.0
+    },
+    {
+      "id": "acc003",
+      "name": "Credit Card",
+      "type": "credit",
+      "balance": -5200.0
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn001",
+      "date": "2025-04-15",
+      "amount": 1500,
+      "description": "Grocery shopping",
+      "category": "Food & Groceries",
+      "accountId": "acc002",
+      "type": "expense"
+    },
+    {
+      "id": "txn002",
+      "date": "2025-04-14",
+      "amount": 5000,
+      "description": "Freelance payment",
+      "category": "Income",
+      "accountId": "acc001",
+      "type": "income"
+    },
+    {
+      "id": "txn003",
+      "date": "2025-04-16",
+      "amount": 1200,
+      "description": "Refund",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "income"
+    },
+    {
+      "id": "txn005",
+      "date": "2025-04-16",
+      "amount": 200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn004",
+      "date": "2025-04-16",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn008",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Refund - Mytra",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "income"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 1200,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-07",
+      "amount": 100,
+      "description": "Electricity bill",
+      "category": "Utilities",
+      "accountId": "acc001",
+      "type": "expense"
+    }
+  ],
+  "expense": [
+    {
+      "spent": 1500,
+      "budget": 2500,
+      "accountId": "acc002",
+      "accName": "Cash Wallet"
+    },
+    {
+      "spent": 1500,
+      "budget": 2500,
+      "accountId": "acc002",
+      "accName": "Cash Wallet"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "budget001",
+      "account": "Cash",
+      "limit": 5000,
+      "spent": 3000
+    },
+
+    {
+      "id": "budget002",
+      "account": "Card 1",
+      "limit": 2000,
+      "spent": 1450
+    },
+    {
+      "id": "budget001",
+      "account": "Savings",
+      "limit": 5000,
+      "spent": 3000
+    },
+    {
+      "id": "budget002",
+      "account": "Card 1",
+      "limit": 2000,
+      "spent": 1450
+    }
+  ],
+  "categories": [
+    {
+      "id": "budget003",
+      "category": "Entertainment",
+      "limit": 2000,
+      "spent": 450
+    },
+    {
+      "id": "budget004",
+      "category": "Health",
+      "limit": 2000,
+      "spent": 1450
+    },
+
+    {
+      "id": "budget00",
+      "category": "Utilities",
+      "limit": 2000,
+      "spent": 450
+    },
+    {
+      "id": "budget006",
+      "category": "Income",
+      "limit": 2000,
+      "spent": 450
+    },
+    {
+      "id": "budget007",
+      "category": "Health",
+      "limit": 2000,
+      "spent": 450
+    },
+    {
+      "id": "budget008",
+      "category": "Transport",
+      "limit": 2000,
+      "spent": 450
+    },
+    {
+      "id": "budget009",
+      "category": "Others",
+      "limit": 0,
+      "spent": 0
+    }
+  ]
+}
