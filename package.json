@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://your-username.github.io/your-repo",
+  "homepage": "https://your-username.github.io/dX-app-ledger",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
