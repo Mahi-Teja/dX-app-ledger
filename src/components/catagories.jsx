@@ -50,6 +50,7 @@ const Categories = () => {
   const [localData, setLocalData] = useState({ categories: [] });
 
   const category = useSelector((state) => state.categories);
+  const transactions = useSelector((state) => state.transactions);
 
   const dispatch = useDispatch();
 

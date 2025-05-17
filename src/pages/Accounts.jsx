@@ -16,6 +16,9 @@ const Accounts = ({}) => {
     JSON.parse(localStorage.getItem("dxData")).accounts
   );
   const [openAddAcc, setOpenAddAcc] = useState(true);
+  const [openPopUp, setOpenPopUp] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editDetails, setEditDetails] = useState({});
   const [fields, setFields] = useState({});
   const toggleOpen = () => setOpenAddAcc((pre) => !pre);
 
@@ -44,13 +47,19 @@ const Accounts = ({}) => {
     // data?.accounts?.push(fields);
     // localStorage.setItem("data", JSON.stringify(data));
   };
+
+  const editAcc = (e, acc = {}) => {
+    setOpenEdit(true);
+    setEditDetails(acc);
+    console.log(acc);
+  };
   return (
     <section className="h-screen bg-gray-100">
       {/* <Nav   /> */}
 
       <section className="flex flex-col items-center justify-center my-10 ">
         <h1 className="text-2xl font-bold mb-4">Accounts</h1>
-        <div className="bg-[#3e3e3e] shadow-md rounded-lg p-6 w-96">
+        <div className="bg-[#3e3e3e] shadow-md rounded-lg p-6 w-96 relative">
           <div className="flex  justify-center">
             <h2 className="text-xl    font-semibold mb-4">
               {data?.accounts?.length > 0
@@ -125,8 +134,68 @@ const Accounts = ({}) => {
                     </div>
                   </div>
                   <span>${account.balance}</span>
-                  <button>Edit</button>
-                  <button>Delete</button>
+                  <button onClick={(e) => editAcc(e, account)}>Edit</button>
+                  <button
+                    onClick={() => {
+                      console.log("kks");
+
+                      setOpenPopUp(true);
+                    }}
+                  >
+                    Delete
+                  </button>
+                  {openPopUp && (
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                      <section className="bg-white p-6 w-[45vw] rounded flex flex-col items-center shadow-2xl">
+                        <div className="font-semibold mb-2">
+                          Are you sure you want to delete?
+                        </div>
+                        <p>Not working Yet</p>
+
+                        <div className="text-sm mb-4">
+                          All the data will be lost.
+                        </div>
+                        <div className="flex gap-4">
+                          <button className="bg-red-500 text-white px-4 py-1 rounded">
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => setOpenPopUp(false)}
+                            className="bg-blue-400 text-white px-4 py-1 rounded"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </section>
+                    </div>
+                  )}
+                  {openEdit && (
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                      <section className="bg-white p-6 w-[45vw] rounded flex flex-col items-center shadow-2xl">
+                        <div className="font-semibold mb-2">Edit mode</div>
+                        <p>Not working Yet</p>
+                        {}
+                        <input type="text" value={editDetails?.name} />
+                        <input type="text" value={editDetails?.type} />
+                        <input type="text" value={editDetails?.balance} />
+
+                        <div className="flex gap-4">
+                          <button className="bg-red-500 text-white px-4 py-1 rounded">
+                            Save
+                          </button>
+                          <button
+                            onClick={() => {
+                              setOpenEdit(false);
+                              setEditDetails({});
+                            }}
+                            className="bg-blue-400 text-white px-4 py-1 rounded"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </section>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -144,3 +213,40 @@ const Accounts = ({}) => {
 };
 
 export default Accounts;
+
+const PopUp = ({ openIt }) => {
+  const [open, setOpen] = useState(openIt);
+  useEffect(() => {
+    // Disable scroll
+    document.body.style.overflow = "hidden";
+
+    // Cleanup: enable scroll again when modal unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
+  return (
+    !open && (
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+        <section className="bg-white p-6 w-[45vw] rounded flex flex-col items-center shadow-2xl">
+          <div className="font-semibold mb-2">
+            Are you sure you want to delete?
+          </div>
+          <div className="text-sm mb-4">All the data will be lost.</div>
+          <div className="flex gap-4">
+            <button className="bg-red-500 text-white px-4 py-1 rounded">
+              Delete
+            </button>
+            <button
+              onClick={() => setOpen(true)}
+              className="bg-blue-400 text-white px-4 py-1 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </section>
+      </div>
+    )
+  );
+};
