@@ -1,6 +1,12 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  HashRouter,
+  useLocation,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "../store/store.js";
 
@@ -19,10 +25,15 @@ import Nav from "../components/Nav.jsx";
 
 export const DD = ({ children }) => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
+  const location = useLocation();
+  const hideNavForPath = ["/login", "/signup"];
+  const showNavPath = !hideNavForPath.includes(location.pathname);
   return (
-    <BrowserRouter>
+    <>
+      {/* <BrowserRouter>
+        <HashRouter> */}
       {/* {window.location.href.includes("/signup") ? null : <Nav />} */}
-      <Nav />
+      {showNavPath && <Nav />}
       <Routes>
         {/* Public Routes */}
         <Route
@@ -101,6 +112,8 @@ export const DD = ({ children }) => {
         {/* Catch-all fallback */}
         <Route path="*" element={<Signup />} />
       </Routes>
-    </BrowserRouter>
+      {/* </HashRouter> 
+      </BrowserRouter> */}
+    </>
   );
 };
