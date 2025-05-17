@@ -69,10 +69,11 @@ export default Transactions;
 
 export const TxnItem = ({ transaction }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dateData = formatDate(transaction.date);
   return (
     <div
       key={transaction.id}
-      onClick={(e) => setIsOpen((pre) => pre)}
+      onClick={(e) => setIsOpen((pre) => !pre)}
       className={`txn-item  m-2 p-2 rounded-lg cursor-pointer  ${
         transaction.type === "income"
           ? "border-l-2 border-green-500 bg-[#99f3ad] hover:bg-[#c2ffcf]"
@@ -83,16 +84,25 @@ export const TxnItem = ({ transaction }) => {
         {/* <li>
                     <img src={transaction.category.icon} alt="category_icon" />
                   </li> */}
-        <li title="category">{transaction.category}</li>
-        <li title="date">{formatDate(transaction.date)}</li>
+        {isOpen ? (
+          <li title="date">
+            {dateData.date_month}/{dateData.year}
+          </li>
+        ) : (
+          <li title="date">{dateData.date_month}</li>
+        )}
         <li title="description">{transaction.description}</li>
-        <li title="account">{transaction.account}</li>
+
         <li title="amaount">
           {transaction.type === "income" ? "+" : "-"}${transaction.amount}
         </li>
       </ul>
-
-      {isOpen && <div className="h-5 p-2 m-2">// show more details here</div>}
+      {isOpen && (
+        <ul className="flex justify-between ">
+          <li title="category">{transaction.category}</li>
+          <li title="account">{transaction.account}</li>
+        </ul>
+      )}
     </div>
   );
 };

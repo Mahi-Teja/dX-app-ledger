@@ -4,6 +4,7 @@ export const Button1 = ({
   children,
   className = "",
   handleClick = () => {},
+  title = "",
 }) => {
   return (
     <button
@@ -12,6 +13,7 @@ export const Button1 = ({
         e.preventDefault();
         handleClick();
       }}
+      title={title}
     >
       {children}
     </button>

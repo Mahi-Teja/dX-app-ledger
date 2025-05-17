@@ -49,8 +49,12 @@ const AddTxn = () => {
   const toggleTxnModal = () => setOpenAddTxn((pre) => !pre);
 
   return !openAddTxn ? (
-    <Button1 className="w-3/4 block mx-auto mt-6" handleClick={toggleTxnModal}>
-      ➕ Add Transaction
+    <Button1
+      className="lg:w-3/4 lg:block lg:static fixed bottom-12 right-8 shadow-2xl mx-auto mt-6  "
+      handleClick={toggleTxnModal}
+      title="Add New transacton"
+    >
+      ➕
     </Button1>
   ) : (
     <Model>
