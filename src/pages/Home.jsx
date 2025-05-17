@@ -16,6 +16,7 @@ import {
   addStateTransactions,
   addTransaction,
 } from "../app/state/state.transactions.js";
+import TodaysStats from "../components/TodaysStats.jsx";
 
 //
 // Add date navigation
@@ -97,7 +98,7 @@ function App() {
   return (
     <main className="bg-gray-400  ">
       {/* <Nav /> */}
-      <section className="flex justify-evenly">
+      <section className="flex justify-evenly flex-wrap">
         <div className=""> {"<<"} </div>
         <div className="">
           Yesterday {JSON.stringify(new Date()).split("T")[0]}
@@ -107,9 +108,15 @@ function App() {
         <div className="">{">>"}</div>
         <input type="date" name="" id="" />
       </section>
-      <section className="">
-        <section>Todays Expense: {todaysExpenses} </section>
-        <section>Todays Income: {todaysIncomes} </section>
+      <section className="flex">
+        <TodaysStats
+          stat={todaysExpenses}
+          statTitlel={"Today's Expenes"}
+        ></TodaysStats>
+        <TodaysStats
+          stat={todaysIncomes}
+          statTitlel={"Today's Income"}
+        ></TodaysStats>
       </section>
 
       <AddTxn />
