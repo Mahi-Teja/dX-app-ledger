@@ -1,66 +1,36 @@
-import { Button1 } from "../components/button1.jsx";
-// import data from "../dummy.json";
-import Accounts from "./Accounts.jsx";
-import Catagories from "../components/catagories.jsx";
-import Nav from "../components/Nav.jsx";
-import Transactions, { TxnItem } from "../components/Transactions.jsx";
-import AddTxn from "../components/addTxn.jsx";
 import { useEffect, useRef, useState } from "react";
-import { Model } from "../components/Model.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import { addToLocalDB } from "../utils/addToLocalDB.js";
-import { addUser } from "../app/state/user.js";
-import { addaccount } from "../app/state/state.accounts.js";
-import { addCategory } from "../app/state/state.categories.js";
-import {
-  addStateTransactions,
-  addTransaction,
-} from "../app/state/state.transactions.js";
-import TodaysStats from "../components/TodaysStats.jsx";
+import { useSelector } from "react-redux";
 
+import data from "../../dummy.json";
+import { TxnItem } from "../components/transactions/TxnItem.jsx";
+import AddTxn from "../components/addTxn.jsx";
+import TodaysStats from "../components/TodaysStats.jsx";
+// icons
+import { FaCalendarAlt } from "react-icons/fa";
+import DateNav from "../components/DateNav.jsx";
 //
 // Add date navigation
-// Adding State
+//
 //  Adding BackEnd
 //
 
-function App() {
+function Home() {
   const [todaysExpenses, setTodaysExpenses] = useState(0);
   const [todaysIncomes, setTodaysIncomes] = useState(0);
   const [dates, setDates] = useState(new Date());
+  const [selectedDate, setselectedDate] = useState(dates);
+  const [openDate, setOpenDate] = useState(false);
+  const dateInputRef = useRef(null);
   const transactions = useSelector((state) => state.transactions);
-  const accounts = useSelector((state) => state.accounts);
-
-  // const [data, setData] = useState(JSON.parse(localStorage.getItem("dxData")));
-  const dispatch = useDispatch();
-  const data = JSON.parse(localStorage.getItem("dxData"));
-
-  // If LocalDb has data update the state with that data when loaded
-  useEffect(() => {
-    if (data?.accounts.length > 0) {
-      dispatch(addaccount(data?.accounts));
-    }
-    if (data?.transactions?.length > 0) {
-      dispatch(addStateTransactions(data?.transactions));
-    }
-    if (data?.user) {
-      dispatch(addUser(data?.user));
-      // dispatch(addCategory(data?.categories));
-      // dispatch(addTransaction(data?.transactions));
-    }
-  }, []);
+  // const accounts = useSelector((state) => state.accounts);
+  // console.log(new Date(selectedDate).toISOString().split("T")[0]);
 
   // dates value to use
   const Today = useRef(new Date().toISOString().split("T")[0]);
-  const Yest = useRef(getDates(-1, true));
-  const Tomm = useRef(getDates(1, true));
+  // const Yest = useRef(getDates(-1, true));
+  // const Tomm = useRef(getDates(1, true));
 
-  // function to get yesterday and tommorrow
-  function getDates(day, dateOnly = false) {
-    let d = dates;
-    d.setDate(d.getDate() + day);
-    return dateOnly ? new Date(d).toISOString().split("T")[0] : d;
-  }
+  // const isoDate = (date)=> new Date(date).toISOString().split("T")[0]
 
   // useEffect to filter all the transactions for that day
   useEffect(() => {
@@ -68,7 +38,7 @@ function App() {
       ?.filter(
         (transaction) =>
           transaction.type === "expense" &&
-          transaction.date == new Date().toISOString().split("T")[0]
+          transaction.date == new Date(selectedDate).toISOString().split("T")[0]
       )
       ?.reduce(
         (acc, transaction) => Number(acc) + Number(transaction.amount),
@@ -78,7 +48,7 @@ function App() {
       ?.filter(
         (transaction) =>
           transaction.type === "income" &&
-          transaction.date == new Date().toISOString().split("T")[0]
+          transaction.date == new Date(selectedDate).toISOString().split("T")[0]
       )
       ?.reduce(
         (acc, transaction) => Number(acc) + Number(transaction.amount),
@@ -87,28 +57,59 @@ function App() {
 
     setTodaysExpenses(todaysExpense);
     setTodaysIncomes(todaysIncome);
-  }, [transactions]);
+  }, [transactions, selectedDate]);
 
   const TodaysTxns = transactions
-    ?.filter((txn) => txn.date == Today.current)
+    ?.filter(
+      (txn) => txn.date == new Date(selectedDate).toISOString().split("T")[0]
+    )
     ?.map((txn, i) => {
       return <TxnItem key={i} transaction={txn} />;
     });
 
+  // const DateNav = () => {
+  //   return (
+  //     <section className="row-span-1 flex justify-evenly flex-wrap">
+  //       <div className=""> {"<<"} </div>
+  //       {/* <div className="">Yesterday</div> */}
+  //       <div
+  //         className="font-semibold"
+  //         onClick={() => setselectedDate(Date.now())}
+  //       >
+  //         Today
+  //       </div>
+  //       {/* <div className="">Tommorrow</div> */}
+  //       <div className="">{">>"}</div>
+  //       <FaCalendarAlt
+  //         onClick={() => {
+  //           setOpenDate((pre) => !pre);
+  //           // console.log(dateInputRef.current.);
+  //         }}
+  //       />
+  //       {openDate && (
+  //         <input
+  //           ref={dateInputRef}
+  //           title="customDate"
+  //           type="date"
+  //           onChange={(e) => setselectedDate(e.target.value)}
+  //           name=""
+  //           id=""
+  //           autoFocus
+  //         />
+  //       )}
+  //     </section>
+  //   );
+  // };
+
   return (
-    <main className="bg-gray-400  ">
+    <main className=" flex flex-col m-0">
       {/* <Nav /> */}
-      <section className="flex justify-evenly flex-wrap">
-        <div className=""> {"<<"} </div>
-        <div className="">
-          Yesterday {JSON.stringify(new Date()).split("T")[0]}
-        </div>
-        <div className="">Today {JSON.stringify(new Date()).split("T")[0]}</div>
-        <div className="">Tommorrow</div>
-        <div className="">{">>"}</div>
-        <input type="date" name="" id="" />
-      </section>
-      <section className="flex">
+
+      {/* <DateNav className="row-span-" /> */}
+      <DateNav selectedDate={selectedDate} setSelectedDate={setselectedDate} />
+
+      {/* <CustomDatePicker /> */}
+      <section className=" row-span- flex">
         <TodaysStats
           stat={todaysExpenses}
           statTitlel={"Today's Expenes"}
@@ -119,16 +120,18 @@ function App() {
         ></TodaysStats>
       </section>
 
-      <AddTxn />
-
-      <section className="  ">
-        <section className="h-[60vh] mx-2  p-2 rounded-xl  bg-[#3e3e3e] overflow-auto">
+      <AddTxn seldectedDate={selectedDate} />
+      {/* sm:76vh md: */}
+      <section className="h-[76vh] md:h-[70vh] p-2  ">
+        <section className=" h-full    mx-2  p-2 rounded-xl  bg-indigo-100 overflow-auto">
           <p className="font-semibold text-center">Transactions</p>
           <div className="p-1">
             {TodaysTxns?.length > 0 ? (
               TodaysTxns
             ) : (
-              <p className="text-center">No Transactions made today to show</p>
+              <p className="text-center italic  rounded-lg text-indigo-700">
+                No Transactions to show
+              </p>
             )}
           </div>
         </section>
@@ -137,4 +140,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

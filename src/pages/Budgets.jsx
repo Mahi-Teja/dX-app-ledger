@@ -1,10 +1,11 @@
-import React from "react";
-import Nav from "../components/Nav";
-import data from "../../dummy.json";
+// import data from "../../dummy.json";
 export const Budgets = () => {
   return (
-    <section className="bg-[#3e3e3e] h-[88vh]">
-      <div>Budgets</div>;
+    <section className="bg-indigo-300 h-[88vh]">
+      <div className="text-xl text-center">Budgets</div>;
+      <p className="text-indigo-100 italic text-center font-semibold">
+        coming soon
+      </p>
     </section>
   );
 };

@@ -5,15 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTransaction } from "../app/state/state.transactions";
 import { addToLocalDB } from "../utils/addToLocalDB";
 
-const AddTxn = () => {
-  const data = JSON.parse(localStorage.getItem("data"));
+const AddTxn = ({ seldectedDate }) => {
   const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions);
   const categories = useSelector((state) => state.categories);
   const accounts = useSelector((state) => state.accounts);
 
   const [openAddTxn, setOpenAddTxn] = useState(false);
-  const [txns, setTxns] = useState(transactions);
+  // const [txns, setTxns] = useState(transactions);
   const [fields, setFields] = useState({});
   const [isExpense, setIsExpense] = useState(true);
 
@@ -26,12 +25,13 @@ const AddTxn = () => {
       alert("Amount should be a number");
       return;
     }
+    console.log(seldectedDate);
 
     const newTxn = {
-      id: txns?.length + 1,
+      id: transactions?.length + 1,
       description: fields.description,
       amount: fields.amount,
-      date: new Date().toISOString().split("T")[0],
+      date: new Date(seldectedDate).toISOString().split("T")[0],
       type: isExpense ? "expense" : "income",
       category: fields.category,
       account: fields.account,
@@ -41,7 +41,7 @@ const AddTxn = () => {
     // update localDb
     addToLocalDB({ transactions: [...transactions, newTxn] });
 
-    setTxns((pre) => [...pre, newTxn]);
+    // setTxns((pre) => [...pre, newTxn]);
     setFields({});
     setOpenAddTxn(false);
   };
@@ -50,11 +50,11 @@ const AddTxn = () => {
 
   return !openAddTxn ? (
     <Button1
-      className="lg:w-3/4 lg:block lg:static fixed bottom-12 right-8 shadow-2xl mx-auto mt-6  "
+      className=" lg:block   fixed bottom-20 text-center align-middle self  rounded-full   w-14  text-white right-8  text-4xl shadow-indigo-300 shadow-sm mx-auto mt-6  "
       handleClick={toggleTxnModal}
       title="Add New transacton"
     >
-      ➕
+      +
     </Button1>
   ) : (
     <Model>
@@ -123,12 +123,12 @@ const AddTxn = () => {
             onChange={(e) => setFields({ ...fields, amount: e.target.value })}
             className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
           />
-          <div className="flex">
+          <div className="flex flex-col justify-center w-full md:flex-row">
             <select
               onChange={(e) =>
                 setFields({ ...fields, category: e.target.value })
               }
-              className="p-3 mr-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+              className="p-3 mb-1  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
             >
               <option value="">Select Category</option>
               {categories?.map((category, i) => (
@@ -142,7 +142,7 @@ const AddTxn = () => {
               onChange={(e) =>
                 setFields({ ...fields, account: e.target.value })
               }
-              className="p-3 ml-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+              className="p-3 mt-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
             >
               <option value="">Select Account</option>
               {accounts?.map((account, i) => (

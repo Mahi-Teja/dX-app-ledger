@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
 //  can take options as array of object
 //  each object has type: checkbox, or date if it is a date,categories->dropdown like that
 //  title to show like expense,income..
@@ -14,7 +14,12 @@ export const useFilters = (options) => {
   };
   const Filters = () => (
     <section className="relative borde transition-all">
-      <button onClick={() => setShowFilters((pre) => !pre)}>Filters</button>
+      <button
+        className="flex justify-center items-center"
+        onClick={() => setShowFilters((pre) => !pre)}
+      >
+        Filters {showFilters ? <MdFilterAltOff /> : <MdFilterAlt />}
+      </button>
 
       {showFilters && (
         <section className="absolute top-8 right-0 z-10 rounded shadow-2xl bg-white p-2 ">
@@ -32,7 +37,7 @@ export const useFilters = (options) => {
                   onChange={() =>
                     setSelectedFilters((pre) =>
                       pre.includes(option)
-                        ? pre.filter((item) => item !== option)
+                        ? pre.filter((item) => item !== option) // de-select option
                         : [...pre, option]
                     )
                   }
@@ -44,7 +49,7 @@ export const useFilters = (options) => {
             );
           })}
           <div className="flex flex-col">
-            <button
+            {/* <button
               className=" bg-blue-400 text-sm m-1 p-2 mx-1 rounded"
               onClick={() => {
                 setShowFilters((pre) => !pre);
@@ -52,7 +57,7 @@ export const useFilters = (options) => {
               }}
             >
               Apply
-            </button>
+            </button> */}
             <button
               className=" bg-blue-400 text-sm  p-2 mx-1 rounded"
               onClick={() => {

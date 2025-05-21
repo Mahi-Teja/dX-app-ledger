@@ -8,7 +8,7 @@ export const Button1 = ({
 }) => {
   return (
     <button
-      className={`bg-blue-600 rounded p-2 m-2 cursor-pointer text-white font-semibold ${className}`}
+      className={`bg-indigo-600 rounded p-2 m-2 cursor-pointer text-white font-semibold ${className}`}
       onClick={(e) => {
         e.preventDefault();
         handleClick();
