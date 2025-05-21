@@ -42,6 +42,14 @@ export const Profile = () => {
             <label className="text-sm font-semibold text-gray-600">Email</label>
             <p className="text-lg font-medium text-gray-800">{user?.email}</p>
           </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-600">
+              Currency
+            </label>
+            <p className="text-lg font-medium text-gray-800">
+              {user.currency ? user?.currency.toUpperCase() : user?.currency}
+            </p>
+          </div>
         </div>
 
         <button

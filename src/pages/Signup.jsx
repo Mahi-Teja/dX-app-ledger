@@ -6,6 +6,7 @@ import { addToLocalDB } from "../utils/addToLocalDB";
 
 export const Signup = () => {
   const [formData, setFormData] = useState({});
+  const [currency, setCurrency] = useState("inr");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -46,11 +47,15 @@ export const Signup = () => {
 
     // if (formData?.username && formData?.password) {
     try {
+      const data = {
+        ...formData,
+        currency,
+      };
       // send api request Here..
-      dispatch(addUser(formData));
-      const updateUser = { user: formData };
+      dispatch(addUser(data));
+      const updateUser = { user: data };
       //   add data to localDb
-      addToLocalDB({ user: formData });
+      addToLocalDB({ user: data });
 
       setError(false);
       navigate("/");
@@ -63,10 +68,10 @@ export const Signup = () => {
   };
 
   return (
-    <div className="m-auto max-w-lg text-lg md:text-xl">
+    <div className="mx-auto max-w-lg text-lg md:text-xl">
       <form
         onSubmit={(e) => handleSubmit(e)}
-        className="flex flex-col p-3 mt-5"
+        className="flex flex-col p-3 py-3"
       >
         <p className="font-bold text-4xl text-center m-3">Start your Journey</p>
         <input
@@ -76,7 +81,7 @@ export const Signup = () => {
           id="username"
           name="username"
           placeholder="username"
-          className="p-3 bg-slate-600 rounded-lg my-3"
+          className="p-3 bg-indigo-200 font-semibold rounded-lg my-3"
         />
         <input
           required
@@ -85,15 +90,31 @@ export const Signup = () => {
           id="email"
           name="email"
           placeholder="email"
-          className="p-3 bg-slate-600 rounded-lg my-3"
+          className="p-3 bg-indigo-200 font-semibold rounded-lg my-3"
         />
+        <select
+          required
+          name="currency"
+          value={currency}
+          onChange={(e) => {
+            setCurrency(e.target.value);
+          }}
+          className="p-3 bg-indigo-200 font-semibold  rounded-lg my-3"
+        >
+          <option default value="inr">
+            INR
+          </option>
+          <option value="usd">USD</option>
+          <option value="euro">EURO</option>
+        </select>
+
         {/* <input
           required
           onChange={(e) => handleChange(e)}
           type="password"
           id="password"
           placeholder="Password"
-          className="p-3 bg-slate-600 rounded-lg my-3"
+          className="p-3 bg-indigo-200 font-semibold rounded-lg my-3"
         /> */}
         {/* <input
           required
@@ -101,7 +122,7 @@ export const Signup = () => {
           type="password"
           id="re-password"
           placeholder="re-enter password"
-          className="p-3 bg-slate-600 rounded-lg my-3"
+          className="p-3 bg-indigo-200 font-semibold rounded-lg my-3"
         /> */}
         {error ? (
           <div className=" p-4 rounded-md text-red-600 bg-orange-100">
@@ -110,7 +131,7 @@ export const Signup = () => {
         ) : null}
         <button
           disabled={disabled}
-          className={`bg-green-900 p-3 rounded-lg my-3 disabled:opacity-60 ${
+          className={`bg-indigo-900 text-indigo-50 p-3 rounded-lg my-3 disabled:opacity-60 ${
             disabled ? "cursor-not-allowed" : "cursor-pointer"
           }`}
         >
