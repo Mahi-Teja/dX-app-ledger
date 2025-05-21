@@ -10,9 +10,8 @@ import {
 import { Provider } from "react-redux";
 import store from "../store/store.js";
 
-import App from "../pages/Home.jsx";
+import Home from "../pages/Home.jsx";
 import Accounts from "../pages/Accounts.jsx";
-import Category from "../pages/category.jsx";
 import Txn from "../pages/Txn.jsx";
 import { Budgets } from "../pages/Budgets.jsx";
 import { Profile } from "../pages/Profile.jsx";
@@ -22,14 +21,15 @@ import { Loginn } from "../pages/Loginn.jsx";
 import { Signup } from "../pages/Signup.jsx";
 import ProtectedRoute from "../pages/Protected.jsx";
 import Nav from "../components/Nav.jsx";
+import Categories from "../components/catagories.jsx";
 
-export const DD = ({ children }) => {
+export const App = ({ children }) => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
   const location = useLocation();
   const hideNavForPath = ["/login", "/signup"];
   const showNavPath = !hideNavForPath.includes(location.pathname);
   return (
-    <>
+    <main className="h-screen  box-border">
       {/* <BrowserRouter>
         <HashRouter> */}
       {/* {window.location.href.includes("/signup") ? null : <Nav />} */}
@@ -43,7 +43,7 @@ export const DD = ({ children }) => {
               <Login />
             ) : (
               <ProtectedRoute>
-                <App />
+                <Home />
               </ProtectedRoute>
             )
           }
@@ -56,7 +56,7 @@ export const DD = ({ children }) => {
           path="/"
           element={
             <ProtectedRoute>
-              <App />
+              <Home />
             </ProtectedRoute>
           }
         />
@@ -72,7 +72,7 @@ export const DD = ({ children }) => {
           path="/category"
           element={
             <ProtectedRoute>
-              <Category />
+              <Categories />
             </ProtectedRoute>
           }
         />
@@ -114,6 +114,6 @@ export const DD = ({ children }) => {
       </Routes>
       {/* </HashRouter> 
       </BrowserRouter> */}
-    </>
+    </main>
   );
 };

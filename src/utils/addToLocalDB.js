@@ -6,12 +6,12 @@ export const addToLocalDB = (updates = {}) => {
     categories: [],
   };
 
-  const updatedData = {
+  const newData = {
     user: updates.user || existingData.user,
     transactions: updates.transactions || existingData.transactions,
     accounts: updates.accounts || existingData.accounts,
     categories: updates.categories || existingData.categories,
   };
 
-  localStorage.setItem("dxData", JSON.stringify(updatedData));
+  localStorage.setItem("dxData", JSON.stringify(newData));
 };

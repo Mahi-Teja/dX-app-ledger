@@ -14,9 +14,9 @@
       "balance": 25000.0
     },
     {
-      "id": "acc002",
-      "name": "Cash Wallet",
-      "type": "cash",
+      "id": "acs1",
+      "name": "Salary Account",
+      "type": "salary",
       "balance": 3200.0
     },
     {
@@ -57,11 +57,11 @@
     {
       "id": "txn005",
       "date": "2025-04-16",
-      "amount": 200,
-      "description": "Electricity bill",
+      "amount": 2,
+      "description": "Cashback E-bill",
       "category": "Utilities",
       "accountId": "acc001",
-      "type": "expense"
+      "type": "income"
     },
     {
       "id": "txn004",
@@ -83,7 +83,25 @@
     },
     {
       "id": "txn006",
-      "date": "2025-05-07",
+      "date": "2025-05-04",
+      "amount": 1200,
+      "description": "Movie",
+      "category": "Entertainment",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-03-04",
+      "amount": 1200,
+      "description": "Movie",
+      "category": "Entertainment",
+      "accountId": "acc001",
+      "type": "expense"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-05-03",
       "amount": 1200,
       "description": "Electricity bill",
       "category": "Utilities",
@@ -94,55 +112,37 @@
       "id": "txn006",
       "date": "2025-05-07",
       "amount": 1200,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
+      "description": "Footware Shopping",
+      "category": "Shopping",
+      "accountId": "acs1",
       "type": "expense"
     },
     {
       "id": "txn006",
       "date": "2025-05-07",
-      "amount": 1200,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
+      "amount": 5200,
+      "description": "Mens Shopping",
+      "category": "Shopping",
+      "accountId": "acs1",
       "type": "expense"
     },
     {
       "id": "txn006",
-      "date": "2025-05-07",
-      "amount": 1200,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
-      "type": "expense"
+      "date": "2025-04-07",
+      "amount": 25000,
+      "description": "Salary",
+      "category": "Salary",
+      "accountId": "acs1",
+      "type": "income"
     },
     {
       "id": "txn006",
       "date": "2025-05-07",
-      "amount": 1200,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
-      "type": "expense"
-    },
-    {
-      "id": "txn006",
-      "date": "2025-05-07",
-      "amount": 1200,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
-      "type": "expense"
-    },
-    {
-      "id": "txn006",
-      "date": "2025-05-07",
-      "amount": 100,
-      "description": "Electricity bill",
-      "category": "Utilities",
-      "accountId": "acc001",
-      "type": "expense"
+      "amount": 25000,
+      "description": "Salary",
+      "category": "Salary",
+      "accountId": "acs1",
+      "type": "income"
     }
   ],
   "expense": [
@@ -208,13 +208,13 @@
     },
     {
       "id": "budget006",
-      "category": "Income",
+      "category": "Shopping",
       "limit": 2000,
       "spent": 450
     },
     {
       "id": "budget007",
-      "category": "Health",
+      "category": "Salary",
       "limit": 2000,
       "spent": 450
     },

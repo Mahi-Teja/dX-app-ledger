@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const db = JSON.parse(localStorage.getItem("dxData"));
-
-const dbTransactions = db?.transactions || [];
-
-const initialState = [...dbTransactions];
+const initialState = [];
 //  the transaction array has objects like:
 // {
 // id: "txn006",
@@ -21,7 +17,7 @@ export const transactionsSlice = createSlice({
   initialState,
   reducers: {
     addTransaction: (state, action) => {
-      const newCat = action.payload;
+      // const newCat = action.payload;
 
       state.push(action.payload);
     },
