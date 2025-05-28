@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // import data from "../../dummy.json";
 import Nav from "../components/Nav";
 import { Button1 } from "../components/button1";
@@ -14,7 +14,7 @@ const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
   const [fields, setFields] = useState({});
 
   const handleAddAccount = () => {
-    if (!fields.type || !fields.name || !fields.balance)
+    if (!fields.type || !fields.name || isNaN(fields.balance))
       return alert("All fields required");
     // const dataTemp = data.accounts.push(fields);
 
@@ -23,7 +23,7 @@ const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
     setFields({});
     setOpenAddAcc(true);
   };
-  console.log(fields);
+  // console.log(fields);
 
   const updateFields = (e) => {
     setFields((pre) => ({ ...pre, type: selectedValue }));
@@ -31,7 +31,7 @@ const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
     if (e.target.id == "balance")
       setFields((pre) => ({
         ...pre,
-        balance: e.target.value,
+        balance: Number(e.target.value),
       }));
     else if (e.target.id == "accType")
       setFields((pre) => ({ ...pre, type: e.target.value }));

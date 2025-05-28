@@ -1,22 +1,32 @@
-import React, { useState } from "react";
+// react
+import { useState } from "react";
+// redux
+import { useDispatch, useSelector } from "react-redux";
+// Components
 import { Button1 } from "./button1";
 import { Model } from "./Model";
-import { useDispatch, useSelector } from "react-redux";
+// reducer functions
 import { addTransaction } from "../app/state/state.transactions";
-import { addToLocalDB } from "../utils/addToLocalDB";
+import {
+  creditAmountToAccount,
+  debitAmountToAccount,
+} from "../app/state/state.accounts";
 
 const AddTxn = ({ seldectedDate }) => {
   const dispatch = useDispatch();
+  // getting state
   const transactions = useSelector((state) => state.transactions);
   const categories = useSelector((state) => state.categories);
   const accounts = useSelector((state) => state.accounts);
 
+  //state variables for this component
   const [openAddTxn, setOpenAddTxn] = useState(false);
-  // const [txns, setTxns] = useState(transactions);
   const [fields, setFields] = useState({});
   const [isExpense, setIsExpense] = useState(true);
 
   const add = () => {
+    // TODO:
+    // Replace alerts with nice ui, like Toast
     if (!fields.description || !fields.amount) {
       alert("Please fill all fields");
       return;
@@ -25,8 +35,8 @@ const AddTxn = ({ seldectedDate }) => {
       alert("Amount should be a number");
       return;
     }
-    console.log(seldectedDate);
 
+    // new transaction object
     const newTxn = {
       id: transactions?.length + 1,
       description: fields.description,
@@ -36,12 +46,23 @@ const AddTxn = ({ seldectedDate }) => {
       category: fields.category,
       account: fields.account,
     };
-    //update State
-    dispatch(addTransaction(newTxn));
-    // update localDb
-    addToLocalDB({ transactions: [...transactions, newTxn] });
 
-    // setTxns((pre) => [...pre, newTxn]);
+    // finding the account to adjust the balance
+    const accToOperate = accounts.find((acc) => acc.name == fields.account);
+
+    // new account object
+    const acc = {
+      account: accToOperate,
+      accountName: fields.account,
+      amount: fields.amount,
+      type: isExpense ? "expense" : "income",
+    };
+    //update State : transaction, credit/debit amount to account
+    dispatch(addTransaction(newTxn));
+    isExpense
+      ? dispatch(debitAmountToAccount(acc)) // debit amount
+      : dispatch(creditAmountToAccount(acc)); // credit account
+
     setFields({});
     setOpenAddTxn(false);
   };
@@ -120,7 +141,9 @@ const AddTxn = ({ seldectedDate }) => {
             required
             value={fields.amount || ""}
             placeholder="Amount"
-            onChange={(e) => setFields({ ...fields, amount: e.target.value })}
+            onChange={(e) =>
+              setFields({ ...fields, amount: Number(e.target.value) })
+            }
             className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
           />
           <div className="flex flex-col justify-center w-full md:flex-row">
