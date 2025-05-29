@@ -29,6 +29,11 @@ const initialState = [
   },
   {
     id: "budget008",
+    category: "Self Transaction",
+    icon: "self",
+  },
+  {
+    id: "budget008",
     category: "Transport",
     icon: "transport",
   },

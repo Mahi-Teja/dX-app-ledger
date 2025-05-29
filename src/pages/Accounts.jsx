@@ -4,9 +4,14 @@ import Nav from "../components/Nav";
 import { Button1 } from "../components/button1";
 import { Model } from "../components/Model";
 import { useDispatch, useSelector } from "react-redux";
-import { addaccount } from "../app/state/state.accounts";
+import {
+  addaccount,
+  deleteAccount,
+  updateAccount,
+} from "../app/state/state.accounts";
 import { AccountIcons, FreeIcons } from "../utils/icons";
 import { CustomButton1 } from "../components/buttons/CustomButton1";
+import EmptyFieldText from "../components/EmptyFieldText";
 
 const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
   const dispatch = useDispatch();
@@ -26,7 +31,11 @@ const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
   // console.log(fields);
 
   const updateFields = (e) => {
-    setFields((pre) => ({ ...pre, type: selectedValue }));
+    setFields((pre) => ({
+      ...pre,
+      type: selectedValue,
+      id: Date.now().toString(),
+    }));
 
     if (e.target.id == "balance")
       setFields((pre) => ({
@@ -72,8 +81,6 @@ const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
               name="accType"
               value={selectedValue}
               onChange={(e) => {
-                console.log(e.target.value);
-
                 setSelectedValue(e.target.value);
                 setFields((pre) => ({ ...pre, type: e.target.value }));
               }}
@@ -109,11 +116,11 @@ const Accounts = () => {
     setEditDetails(acc);
   };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditDetails((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleDelete = () => {};
+  // const handleEditChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setEditDetails((prev) => ({ ...prev, [name]: value }));
+  // };
+  // const handleDelete = () => {};
   return (
     // container
     <section className="   m-0 w-full ">
@@ -136,30 +143,29 @@ const Accounts = () => {
             <AddAccount toggleOpen={toggleOpen} setOpenAddAcc={setOpenAddAcc} />
           )}
 
-          {/* Delete popup */}
-          {openPopUp && <DeleteComp setOpenState={setOpenPopUp} />}
           {/* Edit popup */}
           {openEdit && (
             <EditDetailsComp
-              openPopup={setOpenPopUp}
-              handleEditChange={handleEditChange}
-              setEditDetails={setEditDetails}
               editDetails={editDetails}
               toggleEdit={setOpenEdit}
             />
           )}
           {/* User Accounts */}
           <ul className="space-y-4 overflow-auto pb-6 h-full">
-            {userAccounts?.map((account, i) => {
-              return (
-                <AccountListItem
-                  key={i}
-                  account={account}
-                  handleEdit={clickEdit}
-                  setOpenPopUp={setOpenPopUp}
-                />
-              );
-            })}
+            {userAccounts.length > 0 ? (
+              userAccounts?.map((account, i) => {
+                return (
+                  <AccountListItem
+                    key={i}
+                    account={account}
+                    handleEdit={clickEdit}
+                    setOpenPopUp={setOpenPopUp}
+                  />
+                );
+              })
+            ) : (
+              <EmptyFieldText>No Accounts to show, Add one</EmptyFieldText>
+            )}
           </ul>
         </div>
       </section>
@@ -169,13 +175,10 @@ const Accounts = () => {
 
 export default Accounts;
 
-const AccountListItem = ({
-  account,
-  handleEdit,
-  handleDelete,
-  setOpenPopUp,
-}) => {
+const AccountListItem = ({ account, handleEdit }) => {
   const { user } = useSelector((state) => state.user);
+  const [openPopUp, setOpenPopUp] = useState(false);
+
   return (
     <li
       key={account?.id}
@@ -217,25 +220,42 @@ const AccountListItem = ({
           {FreeIcons.delete}
         </button>
       </div>
+      {/* Delete popup */}
+      {openPopUp && (
+        <DeleteComp account={account} setOpenState={setOpenPopUp} />
+      )}
     </li>
   );
 };
-const EditDetailsComp = ({
-  editDetails,
-  setEditDetails,
-  openPopup,
-  toggleEdit,
-  handleEditChange,
-}) => {
+const EditDetailsComp = ({ editDetails, toggleEdit }) => {
+  const dispatch = useDispatch();
   const [selectedType, setSelectedType] = useState(editDetails.type);
+  const [editFields, setEditFields] = useState(editDetails);
+  console.log(editFields);
 
-  const handleEdit = () => {
+  const updateOnChange = (e) => {
+    const { name, value } = e.target;
+    if (name == "balance") {
+      setEditFields((pre) => ({ ...pre, [name]: Number(value) }));
+    } else {
+      setEditFields((pre) => ({ ...pre, [name]: value }));
+    }
+  };
+
+  const handleEdit = (e) => {
+    //dispatch
+    const editedAccount = editFields;
+
+    dispatch(updateAccount({ editedAccount }));
+
+    // make an API call
+
+    setEditFields({});
     toggleEdit(false);
-    setEditDetails({});
   };
   const handleCancel = () => {
+    setEditFields({});
     toggleEdit(false);
-    // setEditDetails({});
   };
   return (
     <Model>
@@ -247,16 +267,17 @@ const EditDetailsComp = ({
           className="p-3 m-1 rounded border min-w-[50vw] w-full bg-white text-black"
           type="text"
           name="name"
-          value={editDetails.name || ""}
-          onChange={handleEditChange}
+          value={editFields.name || ""}
+          onChange={(e) => updateOnChange(e)}
         />
 
         <select
           required
-          name="accType"
+          name="type"
           value={selectedType}
           onChange={(e) => {
             setSelectedType(e.target.value);
+            updateOnChange(e);
             // updateFields(e);
           }}
           className="p-3 m-1 rounded border w-full bg-white text-black"
@@ -271,8 +292,8 @@ const EditDetailsComp = ({
           className="p-3 m-1 rounded border w-full bg-white text-black"
           type="number"
           name="balance"
-          value={editDetails.balance}
-          onChange={handleEditChange}
+          value={editFields.balance}
+          onChange={updateOnChange}
         />
         <div className="flex py-2  w-full">
           <CustomButton1 variant={"danger"} hanleClick={handleEdit}>
@@ -287,7 +308,12 @@ const EditDetailsComp = ({
   );
 };
 
-const DeleteComp = ({ setOpenState }) => {
+const DeleteComp = ({ setOpenState, account }) => {
+  const dispatch = useDispatch();
+  const handleDelete = (acc) => {
+    console.log(acc);
+    dispatch(deleteAccount(acc));
+  };
   return (
     <Model>
       <section className="bg-white p-6   rounded flex flex-col items-center shadow-2xl">
@@ -298,7 +324,10 @@ const DeleteComp = ({ setOpenState }) => {
 
         <div className="text-sm mb-4">All the data will be lost.</div>
         <div className="flex gap-4">
-          <button className="bg-red-500 text-white px-4 py-1 rounded">
+          <button
+            onClick={() => handleDelete(account)}
+            className="bg-red-500 text-white px-4 py-1 rounded"
+          >
             Delete
           </button>
           <button

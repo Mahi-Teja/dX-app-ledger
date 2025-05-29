@@ -11,6 +11,8 @@ import {
   creditAmountToAccount,
   debitAmountToAccount,
 } from "../app/state/state.accounts";
+import SelfTxn from "./selfTxn";
+import IncomeExpenseForm from "./IncomeExpenseForm";
 
 const AddTxn = ({ seldectedDate }) => {
   const dispatch = useDispatch();
@@ -23,51 +25,19 @@ const AddTxn = ({ seldectedDate }) => {
   const [openAddTxn, setOpenAddTxn] = useState(false);
   const [fields, setFields] = useState({});
   const [isExpense, setIsExpense] = useState(true);
+  const [isSelfTxn, setIsSelfTxn] = useState(false);
 
-  const add = () => {
-    // TODO:
-    // Replace alerts with nice ui, like Toast
-    if (!fields.description || !fields.amount) {
-      alert("Please fill all fields");
-      return;
-    }
-    if (isNaN(fields.amount)) {
-      alert("Amount should be a number");
-      return;
-    }
-
-    // new transaction object
-    const newTxn = {
-      id: transactions?.length + 1,
-      description: fields.description,
-      amount: fields.amount,
-      date: new Date(seldectedDate).toISOString().split("T")[0],
-      type: isExpense ? "expense" : "income",
-      category: fields.category,
-      account: fields.account,
-    };
-
-    // finding the account to adjust the balance
-    const accToOperate = accounts.find((acc) => acc.name == fields.account);
-
-    // new account object
-    const acc = {
-      account: accToOperate,
-      accountName: fields.account,
-      amount: fields.amount,
-      type: isExpense ? "expense" : "income",
-    };
-    //update State : transaction, credit/debit amount to account
-    dispatch(addTransaction(newTxn));
-    isExpense
-      ? dispatch(debitAmountToAccount(acc)) // debit amount
-      : dispatch(creditAmountToAccount(acc)); // credit account
-
-    setFields({});
-    setOpenAddTxn(false);
+  const updateFields = (e) => {
+    const { name, value } = e.target;
+    name == "amount" || name == "balance"
+      ? setFields((pre) => ({ ...pre, [name]: Number(value) }))
+      : setFields((pre) => ({ ...pre, [name]: value }));
   };
 
   const toggleTxnModal = () => setOpenAddTxn((pre) => !pre);
+  const toggleSelf = () => {
+    setIsSelfTxn(true);
+  };
 
   return !openAddTxn ? (
     <Button1
@@ -89,96 +59,71 @@ const AddTxn = ({ seldectedDate }) => {
             ❌
           </button>
         </div>
-
+        {/* Expense or Income  */}
         <div
           className={`p-2 mb-4 rounded-xl transition-all duration-300 ${
             isExpense ? "bg-rose-100" : "bg-emerald-100"
           }`}
         >
-          <div className="flex justify-center gap-4">
+          <div className="grid grid-cols-3 justify-center gap-4">
             <button
               onClick={() => {
+                setIsSelfTxn(false);
                 setIsExpense(true);
                 setFields({ ...fields, type: "expense" });
               }}
               className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                isExpense
+                isExpense && !isSelfTxn
                   ? "bg-rose-500 text-white shadow-md"
                   : "bg-white text-gray-700"
               }`}
             >
               Expense
             </button>
+
             <button
               onClick={() => {
+                setIsSelfTxn(false);
                 setIsExpense(false);
                 setFields({ ...fields, type: "income" });
               }}
               className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                !isExpense
+                !isExpense && !isSelfTxn
                   ? "bg-emerald-500 text-white shadow-md"
                   : "bg-white text-gray-700"
               }`}
             >
               Income
             </button>
+            <button
+              onClick={() => {
+                setIsSelfTxn(true);
+                setIsExpense(false);
+                setFields({ ...fields, type: "self" });
+              }}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                isSelfTxn
+                  ? "bg-pink-500 text-white shadow-md"
+                  : "bg-white text-gray-700"
+              }`}
+            >
+              Self Txn
+            </button>
           </div>
         </div>
-
-        <form className="flex flex-col gap-4">
-          <input
-            type="text"
-            required
-            value={fields.description || ""}
-            onChange={(e) =>
-              setFields({ ...fields, description: e.target.value })
-            }
-            placeholder="Description"
-            className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
+        {/* Form for details */}
+        {isSelfTxn ? (
+          <SelfTxn
+            seldectedDate={seldectedDate}
+            setOpenAddTxn={setOpenAddTxn}
           />
-          <input
-            type="number"
-            required
-            value={fields.amount || ""}
-            placeholder="Amount"
-            onChange={(e) =>
-              setFields({ ...fields, amount: Number(e.target.value) })
-            }
-            className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
+        ) : (
+          <IncomeExpenseForm
+            isExpense={isExpense}
+            setOpenAddTxn={setOpenAddTxn}
+            seldectedDates={seldectedDate}
           />
-          <div className="flex flex-col justify-center w-full md:flex-row">
-            <select
-              onChange={(e) =>
-                setFields({ ...fields, category: e.target.value })
-              }
-              className="p-3 mb-1  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
-            >
-              <option value="">Select Category</option>
-              {categories?.map((category, i) => (
-                <option key={i} value={category.category}>
-                  {category.category}
-                </option>
-              ))}
-            </select>
-
-            <select
-              onChange={(e) =>
-                setFields({ ...fields, account: e.target.value })
-              }
-              className="p-3 mt-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
-            >
-              <option value="">Select Account</option>
-              {accounts?.map((account, i) => (
-                <option key={i} value={account.name}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <Button1 handleClick={add} className="mt-2">
-            Add Transaction
-          </Button1>
-        </form>
+        )}
       </section>
     </Model>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
@@ -90,7 +90,7 @@ const ResizeNav = ({ user }) => {
   );
 };
 
-const MobileNav = ({ user }) => {
+const MobileNav = memo(function MobileNav({ user }) {
   const menuOptions = [
     { title: "Home", path: "/" },
     { title: "Accounts", path: "/accounts" },
@@ -135,6 +135,6 @@ const MobileNav = ({ user }) => {
       </ul>
     </nav>
   );
-};
+});
 
 export default Nav;
