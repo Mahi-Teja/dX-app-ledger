@@ -9,8 +9,9 @@ import {
   debitAmountToAccount,
   selfTransactionAmount,
 } from "../app/state/state.accounts";
+import Dropdown from "../app/state/Dropdown";
 
-const SelfTxn = ({ seldectedDate, setOpenAddTxn }) => {
+const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
   const dispatch = useDispatch();
   const transactions = useSelector((state) => state.transactions);
   const categories = useSelector((state) => state.categories);
@@ -23,28 +24,49 @@ const SelfTxn = ({ seldectedDate, setOpenAddTxn }) => {
   const filteredFrom = accounts.filter((acc) => acc.id != fields.to);
 
   const add = () => {
-    // if (!fields.description || !fields.amount) {
-    //   alert("Please fill all fields");
-    //   return;
-    // }
-    // if (isNaN(fields.amount)) {
-    //   alert("Amount should be a number");
-    //   return;
-    // }
+    if (isNaN(fields.amount)) {
+      alert("Amount should be a number");
+      return;
+    }
+    if (fields.amount === 0) {
+      alert("Enter some amount");
+      return;
+    }
 
     const toAccount = accounts.find((acc) => acc.id == fields.to);
     const fromAccount = accounts.find((acc) => acc.id == fields.from);
 
+    if (!fromAccount || !toAccount) return alert("Select both accounts.");
+    if (fromAccount === toAccount)
+      return alert("From and To accounts cannot be the same.");
+    if (isNaN(fields.amount) || fields.amount <= 0)
+      return alert("Enter a valid amount.");
     // new transaction object
     const newTxn = {
-      id: Date.now().toString(),
-      description: `Self Transaction from '${fromAccount?.name}' to '${toAccount?.name}' `,
-      amount: fields.amount,
-      date: new Date(seldectedDate).toISOString().split("T")[0],
+      id: Date.now().toString(), // Ideally UUID in real apps
       type: "self",
-      category: "self",
-      account: fromAccount?.name,
-      to: toAccount?.name,
+      category: {
+        id: "cat_self_txn",
+        name: "Self Transaction",
+        icon: "self",
+      }, // or use a static ID you use in category list
+      date: new Date(selectedDate).toISOString(), // Better format than UTC string
+      amount: Number(fields.amount),
+
+      // From and To (normalized structure)
+      fromAccount: {
+        id: fromAccount.id,
+        name: fromAccount.name,
+      },
+      toAccount: {
+        id: toAccount.id,
+        name: toAccount.name,
+      },
+
+      // Optional meta fields
+      description: `Transfer from '${fromAccount.name}' to '${toAccount.name}'`,
+      notes: "", // user-defined notes if needed
+      tags: [], // future tagging support
     };
 
     // new account object
@@ -62,32 +84,31 @@ const SelfTxn = ({ seldectedDate, setOpenAddTxn }) => {
     setOpenAddTxn(false);
   };
 
-  const toggleTxnModal = () => setOpenAddTxn((pre) => !pre);
-
   return accounts.length < 2 ? (
     "Need to have min two accounts to do a self transaction."
   ) : (
-    <form className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 justify-center w-full md:flex-row">
-        {/* To Account */}
+    <form className="flex flex-col  gap-4">
+      <div className="flex flex-col gap-3 justify-center w-full  ">
+        {/* From Account */}
         <select
-          onChange={(e) => setFields({ ...fields, to: e.target.value })}
-          className="p-3 mt-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          onChange={(e) => setFields({ ...fields, from: e.target.value })}
+          className="p-3  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
-          <option value="">To Account</option>
-          {filteredTo?.map((account, i) => (
+          <option value="">From Account</option>
+          {filteredFrom?.map((account, i) => (
             <option key={i} value={account.id}>
               {account.name}
             </option>
           ))}
         </select>
-        {/* From Account */}
+
+        {/* To Account */}
         <select
-          onChange={(e) => setFields({ ...fields, from: e.target.value })}
-          className="p-3 mt-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          onChange={(e) => setFields({ ...fields, to: e.target.value })}
+          className="p-3  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
-          <option value="">From Account</option>
-          {filteredFrom?.map((account, i) => (
+          <option value="">To Account</option>
+          {filteredTo?.map((account, i) => (
             <option key={i} value={account.id}>
               {account.name}
             </option>

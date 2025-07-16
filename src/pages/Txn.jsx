@@ -1,14 +1,12 @@
-import React from "react";
 import Transactions from "../components/Transactions";
 
 import Nav from "../components/Nav";
 
 const Txn = () => {
-  return (
-    <section className=" bg-indigo-300 h-screen  ">
-      <Transactions />
-    </section>
-  );
+  // TODO:
+  // to make accordian for transactions
+  // const [openAddTxn, setOpenAddTxn] = useState(null);
+  return <Transactions />;
 };
 
 export default Txn;

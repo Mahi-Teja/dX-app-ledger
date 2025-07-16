@@ -22,7 +22,7 @@ export const Profile = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">
+    <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
           Your Profile

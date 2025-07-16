@@ -1,135 +1,85 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+// components
+import { TxnItem } from "../components/transactions/TxnItem";
+import AddTxn from "../components/addTxn";
+import TodaysStats from "../components/TodaysStats";
+import DateNav from "../components/DateNav";
+// Icons
+import { ArrowIcons } from "../utils/icons";
+import { Wallet2Icon, WalletIcon } from "lucide-react";
 
-import data from "../../dummy.json";
-import { TxnItem } from "../components/transactions/TxnItem.jsx";
-import AddTxn from "../components/addTxn.jsx";
-import TodaysStats from "../components/TodaysStats.jsx";
-// icons
-import { FaCalendarAlt } from "react-icons/fa";
-import DateNav from "../components/DateNav.jsx";
-//
-// Add date navigation
-//
-//  Adding BackEnd
-//
+// Helper: format date to YYYY-MM-DD
+const formatISODate = (date) => new Date(date).toISOString().split("T")[0];
 
-function Home() {
+const Home = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [todaysExpenses, setTodaysExpenses] = useState(0);
   const [todaysIncomes, setTodaysIncomes] = useState(0);
-  const [dates, setDates] = useState(new Date());
-  const [selectedDate, setselectedDate] = useState(dates);
-  const [openDate, setOpenDate] = useState(false);
-  const dateInputRef = useRef(null);
+
   const transactions = useSelector((state) => state.transactions);
-  // const accounts = useSelector((state) => state.accounts);
-  // console.log(new Date(selectedDate).toISOString().split("T")[0]);
 
-  // dates value to use
-  const Today = useRef(new Date().toISOString().split("T")[0]);
-  // const Yest = useRef(getDates(-1, true));
-  // const Tomm = useRef(getDates(1, true));
-
-  // const isoDate = (date)=> new Date(date).toISOString().split("T")[0]
-
-  // useEffect to filter all the transactions for that day
+  // Effect: calculate today's expense & income totals
   useEffect(() => {
-    const todaysExpense = transactions
-      ?.filter(
-        (transaction) =>
-          transaction.type === "expense" &&
-          transaction.date == new Date(selectedDate).toISOString().split("T")[0]
-      )
-      ?.reduce(
-        (acc, transaction) => Number(acc) + Number(transaction.amount),
-        0
-      );
-    const todaysIncome = transactions
-      ?.filter(
-        (transaction) =>
-          transaction.type === "income" &&
-          transaction.date == new Date(selectedDate).toISOString().split("T")[0]
-      )
-      ?.reduce(
-        (acc, transaction) => Number(acc) + Number(transaction.amount),
-        0
-      );
+    const dateStr = formatISODate(selectedDate);
 
-    setTodaysExpenses(todaysExpense);
-    setTodaysIncomes(todaysIncome);
+    const totals = transactions?.reduce(
+      (acc, txn) => {
+        if (formatISODate(txn.date) !== dateStr) return acc;
+        if (txn.type === "expense") acc.expense += Number(txn.amount);
+        if (txn.type === "income") acc.income += Number(txn.amount);
+        return acc;
+      },
+      { expense: 0, income: 0 }
+    );
+
+    setTodaysExpenses(totals.expense);
+    setTodaysIncomes(totals.income);
   }, [transactions, selectedDate]);
 
+  // Today's Transactions List
   const TodaysTxns = transactions
-    ?.filter(
-      (txn) => txn.date == new Date(selectedDate).toISOString().split("T")[0]
-    )
-    ?.map((txn, i) => {
-      return <TxnItem key={i} transaction={txn} />;
-    });
-
-  // const DateNav = () => {
-  //   return (
-  //     <section className="row-span-1 flex justify-evenly flex-wrap">
-  //       <div className=""> {"<<"} </div>
-  //       {/* <div className="">Yesterday</div> */}
-  //       <div
-  //         className="font-semibold"
-  //         onClick={() => setselectedDate(Date.now())}
-  //       >
-  //         Today
-  //       </div>
-  //       {/* <div className="">Tommorrow</div> */}
-  //       <div className="">{">>"}</div>
-  //       <FaCalendarAlt
-  //         onClick={() => {
-  //           setOpenDate((pre) => !pre);
-  //           // console.log(dateInputRef.current.);
-  //         }}
-  //       />
-  //       {openDate && (
-  //         <input
-  //           ref={dateInputRef}
-  //           title="customDate"
-  //           type="date"
-  //           onChange={(e) => setselectedDate(e.target.value)}
-  //           name=""
-  //           id=""
-  //           autoFocus
-  //         />
-  //       )}
-  //     </section>
-  //   );
-  // };
+    ?.filter((txn) => formatISODate(txn.date) === formatISODate(selectedDate))
+    ?.map((txn) => <TxnItem key={txn.id} transaction={txn} />);
 
   return (
-    <main className=" flex flex-col m-0">
-      {/* <Nav /> */}
+    <main className="flex flex-col w-full">
+      <DateNav selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
 
-      {/* <DateNav className="row-span-" /> */}
-      <DateNav selectedDate={selectedDate} setSelectedDate={setselectedDate} />
-
-      {/* <CustomDatePicker /> */}
-      <section className=" row-span- flex">
+      <section className="grid gap-2 w-full  md:text-lg grid-cols-1  md:grid-cols-3  justify-center px-2 md:p-4">
         <TodaysStats
           stat={todaysExpenses}
-          statTitlel={"Today's Expenes"}
-        ></TodaysStats>
+          icon={<>{ArrowIcons.decArrow}</>}
+          type={"expense"}
+          statTitlel=" Expense"
+        />
         <TodaysStats
           stat={todaysIncomes}
-          statTitlel={"Today's Income"}
-        ></TodaysStats>
+          icon={<>{ArrowIcons.incArrow}</>}
+          statTitlel=" Income"
+          type={"income"}
+        />
+        <TodaysStats
+          stat={todaysIncomes - todaysExpenses}
+          type={"balance"}
+          statTitlel="Balance"
+          icon={<>{<WalletIcon />}</>}
+        />
       </section>
 
-      <AddTxn seldectedDate={selectedDate} />
-      {/* sm:76vh md: */}
-      <section className="h-[76vh] md:h-[70vh] p-2  ">
-        <section className=" h-full    mx-2  p-2 rounded-xl  bg-indigo-100 overflow-auto">
-          <p className="font-semibold text-center">Transactions</p>
+      <AddTxn selectedDate={selectedDate} />
+
+      <section className="h-[76vh] md:h-[70vh] p-2">
+        <section className="h-full mx-2 p-2 rounded-xl bg-indigo-100 overflow-auto">
+          <p className=" text-center">
+            Transactions on{" "}
+            <span className="font-semibold">{selectedDate.toDateString()}</span>
+          </p>
           <div className="p-1">
             {TodaysTxns?.length > 0 ? (
               TodaysTxns
             ) : (
-              <p className="text-center italic  rounded-lg text-indigo-700">
+              <p className="text-center italic text-indigo-700">
                 No Transactions to show
               </p>
             )}
@@ -138,6 +88,6 @@ function Home() {
       </section>
     </main>
   );
-}
+};
 
 export default Home;

@@ -3,20 +3,7 @@ import { addToLocalDB } from "../../utils/addToLocalDB";
 
 // const localAccounts = JSON.parse(localStorage.getItem("dxData"))?.accounts;
 
-const initialState = [
-  {
-    id: "123",
-    name: "Cash",
-    type: "cash", // cash,savings,credit
-    balance: 0,
-  },
-];
-// {
-//   "id": "acc001",
-//   "name": "Savings Account",
-//   "type": "bank",
-//   "balance": 25000.0
-// },
+const initialState = [];
 
 export const accountSlice = createSlice({
   name: "account",

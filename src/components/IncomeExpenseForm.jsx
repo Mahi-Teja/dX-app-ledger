@@ -6,77 +6,124 @@ import {
   debitAmountToAccount,
 } from "../app/state/state.accounts";
 import { Button1 } from "./button1";
+import { AddCategoryModal } from "./AddCategory";
+import { AddAccountModel } from "./AddAccount";
 
-const IncomeExpenseForm = ({ isExpense, seldectedDate, setOpenAddTxn }) => {
+const IncomeExpenseForm = ({
+  isExpense,
+  type,
+  selectedDate,
+  setOpenAddTxn,
+}) => {
   const dispatch = useDispatch();
-  const [fields, setFields] = useState({});
+  const [fields, setFields] = useState({
+    description: "",
+    amount: "",
+    categoryId: "",
+    accountId: "",
+  });
   const accounts = useSelector((state) => state.accounts);
   const categories = useSelector((state) => state.categories);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
 
-  console.log(fields);
+  const [returnedCategory, setReturnedCategory] = useState(null);
+  const [returnedAccount, setReturnedAccount] = useState(null);
+
+  const openAddCategoryModal = () => setShowAddCategoryModal(true);
+  const openAddAccountModal = () => setShowAddAccountModal(true);
 
   const updateFields = (e) => {
     const { name, value } = e.target;
-    name == "amount" || name == "balance"
-      ? setFields((pre) => ({ ...pre, [name]: Number(value) }))
-      : setFields((pre) => ({ ...pre, [name]: value }));
+    setFields((prev) => ({
+      ...prev,
+      [name]: name === "amount" ? Number(value) : value,
+    }));
   };
 
-  console.log(seldectedDate);
-
   const add = () => {
-    // TODO:
-    // Replace alerts with nice ui, like Toast
-    if (!fields.description || !fields.amount) {
+    const { description, amount, categoryId, accountId } = fields;
+
+    if (!description || !amount || !categoryId || !accountId) {
       alert("Please fill all fields");
       return;
     }
-    if (isNaN(fields.amount)) {
+
+    if (isNaN(amount)) {
       alert("Amount should be a number");
       return;
     }
-    const ddd = new Date(seldectedDate)?.toISOString().split("T")[0];
 
-    // new transaction object
+    const account = accounts.find((acc) => acc.id === accountId);
+    const category = categories.find((cat) => {
+      return String(cat.id) === String(categoryId);
+    });
+
+    // 🛑 Safety check
+    if (!account || !category) {
+      alert("Account or Category not found. Please try again.");
+      return;
+    }
+
+    const formattedDate = new Date(selectedDate).toISOString().split("T")[0];
+
     const newTxn = {
       id: Date.now().toString(),
-      description: fields.description,
-      amount: fields.amount,
-      date: ddd,
       type: isExpense ? "expense" : "income",
-      category: fields.category,
-      account: fields.account,
-    };
-    console.log(newTxn);
+      amount,
+      date: formattedDate,
+      category:
+        returnedCategory && returnedCategory.id === categoryId
+          ? {
+              id: returnedCategory.id,
+              name: returnedCategory.category,
+              icon: returnedCategory.icon,
+            }
+          : {
+              id: category.id,
+              name: category.category,
+              icon: category.icon,
+            },
+      account:
+        returnedAccount && returnedAccount.id === accountId
+          ? {
+              id: returnedAccount.id,
+              name: returnedAccount.name,
+            }
+          : {
+              id: account.id,
+              name: account.name,
+            },
 
-    // finding the account to adjust the balance
-    const accToOperate = accounts.find((acc) => acc.name == fields.account);
-
-    // new account object
-    const acc = {
-      account: accToOperate,
-      accountName: fields.account,
-      amount: fields.amount,
-      type: isExpense ? "expense" : "income",
+      description,
+      notes: "",
+      tags: [],
+      createdAt: new Date().toISOString(),
     };
-    //update State : transaction, credit/debit amount to account
+
+    const accPayload = {
+      account,
+      amount,
+      type: newTxn.type,
+    };
+
     dispatch(addTransaction(newTxn));
     isExpense
-      ? dispatch(debitAmountToAccount(acc)) // debit amount
-      : dispatch(creditAmountToAccount(acc)); // credit account
+      ? dispatch(debitAmountToAccount(accPayload))
+      : dispatch(creditAmountToAccount(accPayload));
 
-    setFields({});
+    setFields({ description: "", amount: "", categoryId: "", accountId: "" });
     setOpenAddTxn(false);
   };
 
   return (
-    <form className="flex flex-col gap-4">
+    <form className="flex flex-col gap-2">
       <input
         type="text"
         name="description"
         required
-        value={fields.description || ""}
-        onChange={(e) => updateFields(e)}
+        value={fields.description}
+        onChange={updateFields}
         placeholder="Description"
         className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
       />
@@ -84,38 +131,99 @@ const IncomeExpenseForm = ({ isExpense, seldectedDate, setOpenAddTxn }) => {
         type="number"
         name="amount"
         required
-        value={fields.amount || ""}
+        value={fields.amount}
+        onChange={updateFields}
         placeholder="Amount"
-        onChange={(e) => updateFields(e)}
         className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
       />
-      <div className="flex flex-col justify-center w-full md:flex-row">
+      <div className="flex flex-col  gap-2 justify-center items-center w-full md:flex-row">
         <select
-          name="category"
-          onChange={(e) => updateFields(e)}
-          className="p-3 mb-1  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          name="categoryId"
+          value={fields.categoryId}
+          onChange={(e) => {
+            if (e.target.value === "__new__") {
+              openAddCategoryModal();
+            } else {
+              updateFields(e);
+            }
+          }}
+          className="p-3   w-full rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
           <option value="">Select Category</option>
-          {categories?.map((category, i) => (
-            <option key={i} value={category.category}>
-              {category.category}
-            </option>
-          ))}
+          <option value="__new__" className="  font-medium">
+            create one +{}
+          </option>
+          {categories?.map((category) => {
+            return (
+              category.type === type && (
+                <option key={category.category} value={category.id}>
+                  {category.category}
+                </option>
+              )
+            );
+          })}
         </select>
 
         <select
-          name="account"
-          onChange={(e) => updateFields(e)}
-          className="p-3 mt-1 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          name="accountId"
+          value={fields.accountId}
+          onChange={(e) => {
+            if (e.target.value === "__new__") {
+              openAddAccountModal();
+            } else {
+              updateFields(e);
+            }
+          }}
+          className="p-3 w-full rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
           <option value="">Select Account</option>
-          {accounts?.map((account, i) => (
-            <option key={i} value={account.name}>
+          <option
+            onClick={() => setShowAddAccountModal(true)}
+            value="__new__"
+            className="  font-medium"
+          >
+            create one +{}
+          </option>
+          {accounts?.map((account) => (
+            <option key={account.id} value={account.id}>
               {account.name}
             </option>
           ))}
         </select>
       </div>
+      {showAddCategoryModal && (
+        <AddCategoryModal
+          onClose={() => {
+            setShowAddCategoryModal(false);
+          }}
+          onCancel={() => {
+            setShowAddCategoryModal(false);
+            setFields((prev) => ({ ...prev, categoryId: "" }));
+          }}
+          onSuccess={(newCategory) => {
+            setReturnedCategory(newCategory);
+            setFields((prev) => ({ ...prev, categoryId: newCategory.id }));
+            setShowAddCategoryModal(false);
+          }}
+        />
+      )}
+
+      {showAddAccountModal && (
+        <AddAccountModel
+          onClose={() => {
+            setShowAddAccountModal(false);
+          }}
+          onCancel={() => {
+            setShowAddAccountModal(false);
+            setFields((prev) => ({ ...prev, accountId: "" }));
+          }}
+          onSuccess={(newAccount) => {
+            setReturnedAccount(newAccount);
+            setFields((prev) => ({ ...prev, accountId: newAccount.id }));
+            setShowAddAccountModal(false);
+          }}
+        />
+      )}
       <Button1 handleClick={add} className="mt-2">
         Add Transaction
       </Button1>

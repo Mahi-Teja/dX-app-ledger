@@ -21,6 +21,8 @@ export const transactionsSlice = createSlice({
 
       state.push(action.payload);
     },
+    deleteTransaction: (state, action) => {},
+
     addStateTransactions: (state, action) => {
       state = [...action.payload];
     },
