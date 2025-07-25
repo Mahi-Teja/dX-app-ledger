@@ -37,7 +37,7 @@ export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
       type,
       category: trimmedCategory,
       icon,
-      id: Date.now(),
+      id: Date.now().toString(),
     };
 
     dispatch(addCategory(newCategory));
