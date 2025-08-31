@@ -4,6 +4,6 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "dX-app-ledger",
+  base: "/dX-app-ledger/",
   plugins: [react(), tailwindcss()],
 });
