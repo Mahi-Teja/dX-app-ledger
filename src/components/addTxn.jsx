@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button1 } from "./button1";
 import { Model } from "./Model";
-import SelfTxn from "./SelfTxn.jsx";
+// import SelfTxn from "./SelfTxn";
 import IncomeExpenseForm from "./IncomeExpenseForm";
 import { FreeIcons } from "../utils/icons";
 
@@ -82,7 +82,7 @@ const AddTxn = ({ selectedDate }) => {
 
         {/* Form Component Switch */}
         {isSelfTxn ? (
-          <SelfTxn selectedDate={selectedDate} setOpenAddTxn={setOpenAddTxn} />
+      {// <SelfTxn selectedDate={selectedDate} setOpenAddTxn={setOpenAddTxn} />}
         ) : (
           <IncomeExpenseForm
             type={type}
