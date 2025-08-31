@@ -22,9 +22,9 @@ import { Signup } from "../pages/Signup.jsx";
 import ProtectedRoute from "../pages/Protected.jsx";
 import Nav from "../components/Nav.jsx";
 import Categories from "../components/catagories.jsx";
-import SelectedAccount from "../pages/SelectedAccount.jsx";
+// import SelectedAccount from "../pages/SelectedAccount.jsx";
 import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
-import SelectedCategory from "../pages/SelectedCategory.jsx";
+// import SelectedCategory from "../pages/SelectedCategory.jsx";
 import BudgetsPage from "../pages/Budgets.jsx";
 import Transactions from "../components/Transactions.jsx";
 
@@ -71,13 +71,13 @@ export const App = ({ children }) => {
             </ProtectedRoute>
           }
         />
-        <Route
+{/*         <Route
           path="/accounts/:id"
           element={
             <ProtectedRoute>
               <SelectedAccount />
             </ProtectedRoute>
-          }
+          } */}
         />
         <Route
           path="/txns"
@@ -95,14 +95,14 @@ export const App = ({ children }) => {
             </ProtectedRoute>
           }
         />
-        <Route
+{/*         <Route
           path="/category/:name"
           element={
             <ProtectedRoute>
               <SelectedCategory />
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route
           path="/reports"
           element={
