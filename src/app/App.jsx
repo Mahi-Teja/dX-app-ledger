@@ -77,8 +77,8 @@ export const App = ({ children }) => {
             <ProtectedRoute>
               <SelectedAccount />
             </ProtectedRoute>
-          } */}
-        />
+          } 
+        />*/}
         <Route
           path="/txns"
           element={
