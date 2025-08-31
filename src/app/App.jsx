@@ -12,7 +12,7 @@ import store from "../store/store.js";
 
 import Home from "../pages/Home.jsx";
 import Accounts from "../pages/Accounts.jsx";
-import Txn from "../pages/Txn.jsx";
+// import Txn from "../pages/Txn.jsx";
 import { Reports } from "../pages/Reports.jsx";
 import { Profile } from "../pages/Profile.jsx";
 import Test from "../components/Test.jsx";
@@ -26,7 +26,7 @@ import Categories from "../components/catagories.jsx";
 import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
 // import SelectedCategory from "../pages/SelectedCategory.jsx";
 import BudgetsPage from "../pages/Budgets.jsx";
-import Transactions from "../components/Transactions.jsx";
+import Transactions from "../components/Transactions/Transactions.jsx";
 
 export const App = ({ children }) => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
