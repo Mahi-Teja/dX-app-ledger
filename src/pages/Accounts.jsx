@@ -1,98 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import data from "../../dummy.json";
 import Nav from "../components/Nav";
 import { Button1 } from "../components/button1";
 import { Model } from "../components/Model";
 import { useDispatch, useSelector } from "react-redux";
-import { addaccount } from "../app/state/state.accounts";
+import {
+  addaccount,
+  deleteAccount,
+  updateAccount,
+} from "../app/state/state.accounts";
 import { AccountIcons, FreeIcons } from "../utils/icons";
 import { CustomButton1 } from "../components/buttons/CustomButton1";
-
-const AddAccount = ({ toggleOpen, setOpenAddAcc }) => {
-  const dispatch = useDispatch();
-  const [selectedValue, setSelectedValue] = useState("cash");
-  const [fields, setFields] = useState({});
-
-  const handleAddAccount = () => {
-    if (!fields.type || !fields.name || isNaN(fields.balance))
-      return alert("All fields required");
-    // const dataTemp = data.accounts.push(fields);
-
-    dispatch(addaccount(fields));
-
-    setFields({});
-    setOpenAddAcc(true);
-  };
-  // console.log(fields);
-
-  const updateFields = (e) => {
-    setFields((pre) => ({ ...pre, type: selectedValue }));
-
-    if (e.target.id == "balance")
-      setFields((pre) => ({
-        ...pre,
-        balance: Number(e.target.value),
-      }));
-    else if (e.target.id == "accType")
-      setFields((pre) => ({ ...pre, type: e.target.value }));
-    else if (e.target.id == "accName")
-      setFields((pre) => ({ ...pre, name: e.target.value }));
-  };
-  return (
-    <Model setState={toggleOpen}>
-      <section className="flex justify-center items-center rounded-lg relative  p-8 bg-[#fff]  ">
-        <section className="flex flex-col">
-          <div className="shadow-md rounded-lg p-6 lg:w-98">
-            <h2 className="text-xl bold  text-center">Add Account</h2>
-            <button
-              onClick={toggleOpen}
-              className="absolute cursor-pointer  top-3 right-5"
-            >
-              X
-            </button>
-          </div>
-          <div className="flex flex-col">
-            <input
-              autoFocus={true}
-              onChange={(e) => updateFields(e)}
-              className="p-3 m-1 rounded border "
-              type="text"
-              id="accName"
-              placeholder="Account Name"
-            />
-            <input
-              onChange={(e) => updateFields(e)}
-              className="p-3 m-1 rounded border "
-              type="Number"
-              id="balance"
-              placeholder="Balance"
-            />
-            <select
-              required
-              name="accType"
-              value={selectedValue}
-              onChange={(e) => {
-                console.log(e.target.value);
-
-                setSelectedValue(e.target.value);
-                setFields((pre) => ({ ...pre, type: e.target.value }));
-              }}
-              className="p-3 m-1 rounded border bg-white text-black"
-            >
-              <option value="cash">Cash</option>
-              <option value="wallet">Wallet</option>
-              <option value="credit_card">Credit Card</option>
-              <option value="savings">Savings</option>
-              <option value="salary_acc">Salary Account</option>
-            </select>
-          </div>
-
-          <Button1 handleClick={handleAddAccount}>Add</Button1>
-        </section>
-      </section>
-    </Model>
-  );
-};
+import EmptyFieldText from "../components/EmptyFieldText";
+import { useNavigate } from "react-router-dom";
+import { ACCOUNT_TYPES } from "../utils/constants";
+import EmojiSelector from "../components/EmojiPicker";
+import { AddAccountModel } from "../components/AddAccount";
 
 const Accounts = () => {
   const userAccounts = useSelector((state) => state.accounts);
@@ -109,11 +32,11 @@ const Accounts = () => {
     setEditDetails(acc);
   };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditDetails((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleDelete = () => {};
+  // const handleEditChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setEditDetails((prev) => ({ ...prev, [name]: value }));
+  // };
+  // const handleDelete = () => {};
   return (
     // container
     <section className="   m-0 w-full ">
@@ -133,33 +56,35 @@ const Accounts = () => {
         <div className="     lg:pb-3 overflow-auto rounded-lg px-6 h-[78vh] inset-shadow-black  relative">
           {/* Add New Account */}
           {!openAddAcc && (
-            <AddAccount toggleOpen={toggleOpen} setOpenAddAcc={setOpenAddAcc} />
+            <AddAccountModel
+              toggleOpen={toggleOpen}
+              setOpenAddAcc={setOpenAddAcc}
+            />
           )}
 
-          {/* Delete popup */}
-          {openPopUp && <DeleteComp setOpenState={setOpenPopUp} />}
           {/* Edit popup */}
           {openEdit && (
             <EditDetailsComp
-              openPopup={setOpenPopUp}
-              handleEditChange={handleEditChange}
-              setEditDetails={setEditDetails}
               editDetails={editDetails}
               toggleEdit={setOpenEdit}
             />
           )}
           {/* User Accounts */}
           <ul className="space-y-4 overflow-auto pb-6 h-full">
-            {userAccounts?.map((account, i) => {
-              return (
-                <AccountListItem
-                  key={i}
-                  account={account}
-                  handleEdit={clickEdit}
-                  setOpenPopUp={setOpenPopUp}
-                />
-              );
-            })}
+            {userAccounts.length > 0 ? (
+              userAccounts?.map((account, i) => {
+                return (
+                  <AccountListItem
+                    key={i}
+                    account={account}
+                    handleEdit={clickEdit}
+                    setOpenPopUp={setOpenPopUp}
+                  />
+                );
+              })
+            ) : (
+              <EmptyFieldText>No Accounts to show, Add one</EmptyFieldText>
+            )}
           </ul>
         </div>
       </section>
@@ -169,19 +94,17 @@ const Accounts = () => {
 
 export default Accounts;
 
-const AccountListItem = ({
-  account,
-  handleEdit,
-  handleDelete,
-  setOpenPopUp,
-}) => {
+const AccountListItem = ({ account, handleEdit }) => {
   const { user } = useSelector((state) => state.user);
+  const [openPopUp, setOpenPopUp] = useState(false);
+  const navigate = useNavigate();
+
   return (
     <li
       key={account?.id}
-      className="grid grid-cols-5 justify-between bg-[#fff]  gap-3 px-3 rounded-lg shadow-md p-3 my-2 hover:shadow-lg transition-shadow duration-300  "
+      className="grid border  grid-cols-5 justify-between bg-[#fff]  gap-3 px-3 rounded-lg shadow-md p-3 my-2 hover:shadow-lg transition-shadow duration-300  "
     >
-      <div className="col-span-2 flex items-center  justify-start gap-3">
+      <div className="col-span-2 cursor-pointer flex items-center  justify-start gap-3">
         <div className="p-1 text-3xl text-[#c45959]">
           {AccountIcons[account?.type]}
         </div>
@@ -203,82 +126,132 @@ const AccountListItem = ({
       {/* Edit and Delete Icons */}
       <div className="col-span-1 flex flex-co p-1 justify-self-end align-middle">
         <button
-          className="p-1 m-0.5 rounded"
+          className="p-1 m-0.5 rounded cursor-pointer"
           onClick={(e) => handleEdit(e, account)}
         >
           {FreeIcons.edit}
         </button>
         <button
-          className="p-1 m-0.5 rounded"
+          className="p-1 m-0.5 rounded cursor-pointer"
           onClick={() => {
             setOpenPopUp(true);
           }}
         >
           {FreeIcons.delete}
         </button>
+        {/* <button
+          className="p-1 m-0.5 rounded cursor-pointer"
+          onClick={() => navigate(`/accounts/${account.id}`)}
+        >
+          {FreeIcons.verticalThreeDots}
+        </button> */}
       </div>
+      {/* Delete popup */}
+      {openPopUp && (
+        <DeleteComp account={account} setOpenState={setOpenPopUp} />
+      )}
     </li>
   );
 };
-const EditDetailsComp = ({
-  editDetails,
-  setEditDetails,
-  openPopup,
-  toggleEdit,
-  handleEditChange,
-}) => {
-  const [selectedType, setSelectedType] = useState(editDetails.type);
 
-  const handleEdit = () => {
+const EditDetailsComp = ({ editDetails, toggleEdit }) => {
+  const dispatch = useDispatch();
+  const [selectedType, setSelectedType] = useState(editDetails.type);
+  const [editFields, setEditFields] = useState(editDetails);
+
+  const updateOnChange = (e) => {
+    const { name, value } = e.target;
+    if (name == "balance") {
+      setEditFields((pre) => ({ ...pre, [name]: Number(value) }));
+    } else {
+      setEditFields((pre) => ({ ...pre, [name]: value }));
+    }
+  };
+
+  const handleEdit = (e) => {
+    //dispatch
+    const editedAccount = editFields;
+
+    dispatch(updateAccount({ editedAccount }));
+
+    // make an API call
+
+    setEditFields({});
     toggleEdit(false);
-    setEditDetails({});
   };
   const handleCancel = () => {
+    setEditFields({});
     toggleEdit(false);
-    // setEditDetails({});
   };
   return (
     <Model>
-      <section className="bg-white p-6   rounded flex flex-col items-center shadow-2xl">
-        <div className="font-semibold mb-2">Edit mode</div>
-        <p>Not working Yet</p>
+      <section className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-lg">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+          Editing {editDetails?.name} Account
+        </h2>
 
-        <input
-          className="p-3 m-1 rounded border min-w-[50vw] w-full bg-white text-black"
-          type="text"
-          name="name"
-          value={editDetails.name || ""}
-          onChange={handleEditChange}
-        />
+        {/* Name Input */}
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm text-gray-600 mb-1">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            value={editFields.name || ""}
+            onChange={updateOnChange}
+            className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black"
+            placeholder="Enter name"
+          />
+        </div>
 
-        <select
-          required
-          name="accType"
-          value={selectedType}
-          onChange={(e) => {
-            setSelectedType(e.target.value);
-            // updateFields(e);
-          }}
-          className="p-3 m-1 rounded border w-full bg-white text-black"
-        >
-          <option value="cash">Cash</option>
-          <option value="wallet">Wallet</option>
-          <option value="credit_card">Credit Card</option>
-          <option value="savings">Savings</option>
-          <option value="salary_acc">Salary Account</option>
-        </select>
-        <input
-          className="p-3 m-1 rounded border w-full bg-white text-black"
-          type="number"
-          name="balance"
-          value={editDetails.balance}
-          onChange={handleEditChange}
-        />
-        <div className="flex py-2  w-full">
-          <CustomButton1 variant={"danger"} hanleClick={handleEdit}>
+        {/* Account Type Dropdown */}
+        <div className="mb-4">
+          <label htmlFor="type" className="block text-sm text-gray-600 mb-1">
+            Type
+          </label>
+          <select
+            id="type"
+            name="type"
+            required
+            value={selectedType}
+            onChange={(e) => {
+              setSelectedType(e.target.value);
+              updateOnChange(e);
+            }}
+            className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black"
+          >
+            {ACCOUNT_TYPES.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Balance Input */}
+        <div className="mb-6">
+          <label htmlFor="balance" className="block text-sm text-gray-600 mb-1">
+            Balance
+          </label>
+          <input
+            id="balance"
+            type="number"
+            name="balance"
+            value={editFields.balance}
+            onChange={updateOnChange}
+            className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black"
+            placeholder="Enter balance"
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between gap-4">
+          <CustomButton1 variant="danger" hanleClick={handleEdit}>
             Save
           </CustomButton1>
-          <CustomButton1 variant={"safe"} hanleClick={handleCancel}>
+          <CustomButton1 variant="safe" hanleClick={handleCancel}>
             Cancel
           </CustomButton1>
         </div>
@@ -287,18 +260,26 @@ const EditDetailsComp = ({
   );
 };
 
-const DeleteComp = ({ setOpenState }) => {
+const DeleteComp = ({ setOpenState, account }) => {
+  const dispatch = useDispatch();
+  const handleDelete = (acc) => {
+    dispatch(deleteAccount(acc));
+  };
   return (
     <Model>
       <section className="bg-white p-6   rounded flex flex-col items-center shadow-2xl">
         <section className="font-semibold mb-2">
           Are you sure you want to delete?
         </section>
-        <p>Not working Yet</p>
 
-        <div className="text-sm mb-4">All the data will be lost.</div>
+        <div className="text-sm text-center mb-4">
+          This action cannot be undone. This will permanently delete the Account
+        </div>
         <div className="flex gap-4">
-          <button className="bg-red-500 text-white px-4 py-1 rounded">
+          <button
+            onClick={() => handleDelete(account)}
+            className="bg-red-500 text-white px-4 py-1 rounded"
+          >
             Delete
           </button>
           <button

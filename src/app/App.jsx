@@ -13,7 +13,7 @@ import store from "../store/store.js";
 import Home from "../pages/Home.jsx";
 import Accounts from "../pages/Accounts.jsx";
 import Txn from "../pages/Txn.jsx";
-import { Budgets } from "../pages/Budgets.jsx";
+import { Reports } from "../pages/Reports.jsx";
 import { Profile } from "../pages/Profile.jsx";
 import Test from "../components/Test.jsx";
 import { Login } from "../pages/Login.jsx";
@@ -22,6 +22,11 @@ import { Signup } from "../pages/Signup.jsx";
 import ProtectedRoute from "../pages/Protected.jsx";
 import Nav from "../components/Nav.jsx";
 import Categories from "../components/catagories.jsx";
+import SelectedAccount from "../pages/SelectedAccount.jsx";
+import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
+import SelectedCategory from "../pages/SelectedCategory.jsx";
+import BudgetsPage from "../pages/Budgets.jsx";
+import Transactions from "../components/Transactions.jsx";
 
 export const App = ({ children }) => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
@@ -29,11 +34,9 @@ export const App = ({ children }) => {
   const hideNavForPath = ["/login", "/signup"];
   const showNavPath = !hideNavForPath.includes(location.pathname);
   return (
-    <main className="h-screen  box-border">
-      {/* <BrowserRouter>
-        <HashRouter> */}
-      {/* {window.location.href.includes("/signup") ? null : <Nav />} */}
+    <main className={`bg-indigo-300  h-screen  box-border flex`}>
       {showNavPath && <Nav />}
+      {/* <section className="sm:h-[90vh] md:h-screen sm:w-full sm:overflow-auto"> */}
       <Routes>
         {/* Public Routes */}
         <Route
@@ -69,6 +72,22 @@ export const App = ({ children }) => {
           }
         />
         <Route
+          path="/accounts/:id"
+          element={
+            <ProtectedRoute>
+              <SelectedAccount />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/txns"
+          element={
+            <ProtectedRoute>
+              <AllTxnCalendar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/category"
           element={
             <ProtectedRoute>
@@ -77,10 +96,26 @@ export const App = ({ children }) => {
           }
         />
         <Route
+          path="/category/:name"
+          element={
+            <ProtectedRoute>
+              <SelectedCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/budgets"
           element={
             <ProtectedRoute>
-              <Budgets />
+              <BudgetsPage />
             </ProtectedRoute>
           }
         />
@@ -88,7 +123,7 @@ export const App = ({ children }) => {
           path="/transactions"
           element={
             <ProtectedRoute>
-              <Txn />
+              <Transactions />
             </ProtectedRoute>
           }
         />
@@ -114,6 +149,7 @@ export const App = ({ children }) => {
       </Routes>
       {/* </HashRouter> 
       </BrowserRouter> */}
+      {/* </section> */}
     </main>
   );
 };

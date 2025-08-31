@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { formatDate } from "../utils/dates";
+import { ArrowIcons } from "../utils/icons";
 
 const DateNav = ({ selectedDate, setSelectedDate }) => {
   const today = new Date();
@@ -35,13 +36,13 @@ const DateNav = ({ selectedDate, setSelectedDate }) => {
 
   return (
     <section className="flex justify-evenly items-center py-2 gap-3 bg-indigo-400 text-indigo-50 rounded shadow">
-      <button onClick={() => changeDateBy(-1)}>{"<<"}</button>
+      <button onClick={() => changeDateBy(-1)}>{ArrowIcons.leftAngle}</button>
 
       <button onClick={goToToday} className="font-semibold">
         {isToday(currDate) ? "Today" : formatDisplay(currDate)}
       </button>
 
-      <button onClick={() => changeDateBy(1)}>{">>"}</button>
+      <button onClick={() => changeDateBy(1)}>{ArrowIcons.rightAngle}</button>
 
       <input
         type="date"

@@ -1,106 +1,171 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
 import { NavIcons } from "../utils/icons";
 import useIsMobile from "../hooks/hooks.resize";
-
+import { MENU_OPTIONS } from "../utils/constants";
+import { VscLayoutSidebarLeft } from "react-icons/vsc";
+import { VscLayoutSidebarRight } from "react-icons/vsc";
 const Nav = () => {
   const { user } = useSelector((state) => state.user);
   const isMobile = useIsMobile();
-  return isMobile ? <MobileNav user={user} /> : <ResizeNav user={user} />;
+  return isMobile ? <MobileNav user={user} /> : <MainNav user={user} />;
 };
 
-const ResizeNav = ({ user }) => {
-  const [openMenu, setOpenMenu] = useState(false);
+const MainNav = ({ user }) => {
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
-  useEffect(() => {
-    document.body.style.overflow = openMenu ? "hidden" : "auto";
-    return () => (document.body.style.overflow = "auto");
-  }, [openMenu]);
-
-  const toggleMenu = () => setOpenMenu((prev) => !prev);
-
-  const NavListItem = ({ children, path, classList = "" }) => (
-    <Link to={path}>
-      <li
-        onClick={() => setOpenMenu(false)}
-        className={`cursor-pointer lg:hover:bg-indigo-100 
-          ${openMenu ? "text-3xl  p-5 block mx-auto" : "text-sm p-0"}
-           text-indigo-900 font-medium px-3   rounded hover:bg-pink-200 lg:bg-transparent transition-colors  ${classList}`}
-      >
-        {children}
-      </li>
-    </Link>
-  );
+  const toggleMenuExpansion = () => setIsMenuExpanded((prev) => !prev);
 
   return (
-    <nav className="bg-indigo-200 text-indigo-900 p-6 lg:p-3 relative shadow-md">
-      <div className="absolute z-50 text-3xl font-bold right-3 top-2 lg:hidden cursor-pointer">
-        {openMenu ? (
-          <RxCross2 onClick={toggleMenu} />
+    <nav className="bg-indigo-200 text-indigo-900 p-6 lg:p-3 max-w-[24vw] shadow-md">
+      <div className="px-3 mb-2 text-xl cursor-pointer transition-all">
+        {isMenuExpanded ? (
+          <VscLayoutSidebarRight onClick={toggleMenuExpansion} />
         ) : (
-          <RxHamburgerMenu onClick={toggleMenu} />
+          <VscLayoutSidebarLeft onClick={toggleMenuExpansion} />
         )}
       </div>
 
-      {openMenu && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30 lg:hidden"
-          onClick={toggleMenu}
-        ></div>
-      )}
-
-      <ul
-        className={`${
-          openMenu
-            ? " fixed top-10 left-0 right-0 w-full h-screen z-50 flex-col items-center justify-center space-y-6 bg-pastel-blue text-xl"
-            : "hidden lg:flex lg:flex-row lg:static lg:justify-around lg:bg-transparent lg:p-0 lg:space-y-0"
-        } bg-indigo-100`}
-        role="navigation"
-      >
-        <section
-          className={`${
-            openMenu
-              ? "flex  flex-col w-full h-full"
-              : "hidden lg:flex lg:flex-row lg:static lg:justify-around lg:items-center lg:bg-transparent lg:p-0 lg:space-y-0 lg:w-full"
-          }`}
-        >
-          <NavListItem path="/">Home</NavListItem>
-          <NavListItem path="/accounts">Accounts</NavListItem>
-          <NavListItem path="/category">Category</NavListItem>
-          <NavListItem path="/budgets">Budgets</NavListItem>
-          <NavListItem path="/transactions">Transactions</NavListItem>
-          <NavListItem path="/profile" classList="lg:ml-auto">
-            <div className="flex items-center gap-2">
-              <img
-                src={
-                  user?.avatar ||
-                  "https://www.pngmart.com/files/23/Profile-PNG-Photo.png"
-                }
-                alt="Profile Avatar"
-                className="h-8 w-8 rounded-full object-cover border"
-              />
-              <span>{user?.username}</span>
-            </div>
-          </NavListItem>
-        </section>
+      <ul role="navigation">
+        <ExpandedNavItems
+          user={user}
+          isMenuExpanded={isMenuExpanded}
+          setIsMenuExpanded={setIsMenuExpanded}
+        />
       </ul>
     </nav>
   );
 };
 
-const MobileNav = ({ user }) => {
-  const menuOptions = [
-    { title: "Home", path: "/" },
-    { title: "Accounts", path: "/accounts" },
-    { title: "Categories", path: "/category" },
-    { title: "Budgets", path: "/budgets" },
-    { title: "Transactions", path: "/transactions" },
-    { title: "Profile", path: "/profile" },
-  ];
+const ExpandedNavItems = ({ user, isMenuExpanded, setIsMenuExpanded }) => {
+  return (
+    <section className="flex flex-col max-w-[50vw] h-full">
+      {MENU_OPTIONS.map(({ title, path }) => (
+        <NavListItem
+          key={path}
+          path={path}
+          label={title}
+          isProfile={false}
+          isMenuExpanded={isMenuExpanded}
+          setIsMenuExpanded={setIsMenuExpanded}
+        />
+      ))}
+      <NavListItem
+        path="/profile"
+        label="Profile"
+        isProfile={true}
+        user={user}
+        isMenuExpanded={isMenuExpanded}
+        setIsMenuExpanded={setIsMenuExpanded}
+      >
+        {/* Profile */}
+      </NavListItem>
+    </section>
+  );
+};
 
-  const [active, setActive] = useState("Home");
+const ProfileNavItem = ({
+  path,
+  isActive,
+  setIsMenuExpanded,
+  extraClass,
+  user,
+  isMenuExpanded,
+}) => (
+  <Link to={path}>
+    <li
+      onClick={() => setIsMenuExpanded(false)}
+      className={`cursor-pointer mx-auto hover:bg-indigo-100 text-xl 
+        ${isActive ? "bg-indigo-100" : ""}
+        text-indigo-900 font-medium rounded flex items-center transition-colors duration-300 ease-in-out
+        ${extraClass}`}
+    >
+      {/* Avatar container - fixed size, no shrink */}
+      <div className="p-2 py-3 flex-shrink-0">
+        <img
+          src={
+            user?.avatar ||
+            "https://www.pngmart.com/files/23/Profile-PNG-Photo.png"
+          }
+          alt="Profile Avatar"
+          className="h-8 w-8 rounded-full object-cover border"
+        />
+      </div>
+
+      {/* Expanding username label */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${
+            isMenuExpanded
+              ? "opacity-100 max-w-[200px]  ml-0"
+              : "opacity-0 max-w-0 ml-2"
+          }
+          whitespace-nowrap`}
+      >
+        <span className="text-lg">{user?.username}</span>
+      </div>
+    </li>
+  </Link>
+);
+
+const NavListItem = ({
+  path,
+  label,
+  isProfile = false,
+  user,
+  children,
+  isMenuExpanded,
+  setIsMenuExpanded,
+  extraClass = "",
+}) => {
+  const location = useLocation();
+  const isActive = location.pathname === path;
+
+  return !isProfile ? (
+    path !== "/profile" && (
+      <Link to={path}>
+        <li
+          onClick={() => setIsMenuExpanded(false)}
+          className={`cursor-pointer hover:bg-indigo-100 text-xl w-full m-1
+          ${isActive ? "bg-indigo-100" : ""}
+          text-indigo-900 font-medium rounded flex items-center transition-colors duration-300 ease-in-out
+          ${extraClass}`}
+        >
+          <div className="px-2 text-center text-xl py-3">
+            {NavIcons[label] || NavIcons.Profile}
+          </div>
+
+          <div
+            className={` text-lg pr-3  transition-all duration-300 ease-in-out
+            ${
+              isMenuExpanded
+                ? "opacity-100 max-w-[200px]  ml-0"
+                : "opacity-0 max-w-0 ml-2"
+            }
+            whitespace-nowrap`}
+          >
+            {children || label}
+          </div>
+        </li>
+      </Link>
+    )
+  ) : (
+    <ProfileNavItem
+      path={path}
+      user={user}
+      isActive={isActive}
+      isMenuExpanded={isMenuExpanded}
+      setIsMenuExpanded={setIsMenuExpanded}
+      extraClass={extraClass}
+    />
+  );
+};
+
+const MobileNav = memo(function MobileNav({ user }) {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
 
   return (
     <nav
@@ -108,16 +173,16 @@ const MobileNav = ({ user }) => {
       role="navigation"
     >
       <ul className="flex justify-around items-center px-4 py-2">
-        {menuOptions.map(({ title, path }, i) => (
+        {MENU_OPTIONS.map(({ title, path }, i) => (
           <li key={i} className="flex flex-col items-center text-2xl">
             <Link
               to={path}
-              onClick={() => setActive(title)}
-              className={`rounded-full p-2 transition-colors duration-200 ${
-                active === title
-                  ? "bg-indigo-400 text-white"
-                  : "bg-indigo-100 text-indigo-800"
-              }`}
+              className={`rounded-full p-2 transition-colors duration-200 
+                ${
+                  isActive(path)
+                    ? "bg-indigo-400 text-white"
+                    : "bg-indigo-100 text-indigo-800"
+                }`}
               aria-label={title}
             >
               {title === "Profile" && user?.avatar ? (
@@ -135,6 +200,6 @@ const MobileNav = ({ user }) => {
       </ul>
     </nav>
   );
-};
+});
 
 export default Nav;

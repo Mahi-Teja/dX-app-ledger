@@ -1,77 +1,66 @@
 import React, { useState } from "react";
-import { MdFilterAlt, MdFilterAltOff } from "react-icons/md";
-//  can take options as array of object
-//  each object has type: checkbox, or date if it is a date,categories->dropdown like that
-//  title to show like expense,income..
-//  and if anyother needed
+import { FreeIcons } from "../utils/icons";
+import { CustomButton2 } from "../components/button1";
 
-export const useFilters = (options) => {
+// Supports array of strings for now (e.g., ["expense", "income"])
+// Can be extended to take array of objects with { type, title, key }
+export const useFilters = (options = []) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  const applyFilters = () => {
-    // can set any state currently not used
+  const toggleFilter = (option) => {
+    setSelectedFilters((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option]
+    );
   };
+
+  const clearFilters = () => {
+    setSelectedFilters([]);
+    setShowFilters(false);
+  };
+
   const Filters = () => (
-    <section className="relative borde transition-all">
-      <button
-        className="flex justify-center items-center"
-        onClick={() => setShowFilters((pre) => !pre)}
-      >
-        Filters {showFilters ? <MdFilterAltOff /> : <MdFilterAlt />}
-      </button>
+    <div className="relative">
+      <CustomButton2
+        label={
+          <span className="flex items-center gap-2">
+            Filters{" "}
+            {showFilters ? FreeIcons.filteropen : FreeIcons.filterClosed}
+          </span>
+        }
+        onClickHandler={() => setShowFilters((prev) => !prev)}
+      />
 
       {showFilters && (
-        <section className="absolute top-8 right-0 z-10 rounded shadow-2xl bg-white p-2 ">
-          {options.map((option, i) => {
-            return (
-              <section
-                key={i}
-                className="flex flex-start align-baseline items-baseline px-2 mx-2"
-              >
-                {/* <div className="p-2 m-2 h-2 w-2 bg-gray-500 rounded"></div> */}
-                <input
-                  type="checkbox"
-                  name={option}
-                  id={option}
-                  onChange={() =>
-                    setSelectedFilters((pre) =>
-                      pre.includes(option)
-                        ? pre.filter((item) => item !== option) // de-select option
-                        : [...pre, option]
-                    )
-                  }
-                  checked={selectedFilters?.includes(option)}
-                  className="p-2 mx-1 items-center text-lg"
-                />
-                <h3 className="items-center text-lg">{option}</h3>
-              </section>
-            );
-          })}
-          <div className="flex flex-col">
-            {/* <button
-              className=" bg-blue-400 text-sm m-1 p-2 mx-1 rounded"
-              onClick={() => {
-                setShowFilters((pre) => !pre);
-                applyFilters();
-              }}
+        <div className="absolute top-8 right-0 z-10 rounded shadow-2xl bg-white p-2 w-max min-w-[160px]">
+          {options.map((option) => (
+            <label
+              key={option}
+              className="flex items-center gap-2 px-2 py-1 cursor-pointer"
             >
-              Apply
-            </button> */}
-            <button
-              className=" bg-blue-400 text-sm  p-2 mx-1 rounded"
-              onClick={() => {
-                setShowFilters((pre) => !pre);
+              <input
+                type="checkbox"
+                checked={selectedFilters.includes(option)}
+                onChange={() => toggleFilter(option)}
+                className="accent-blue-500"
+              />
+              <span className="text-sm capitalize">{option}</span>
+            </label>
+          ))}
 
-                setSelectedFilters([]);
-              }}
+          <div className="mt-2 flex justify-end">
+            <button
+              className="bg-blue-500 text-white text-xs px-3 py-1 rounded hover:bg-blue-600"
+              onClick={clearFilters}
             >
               Clear All
             </button>
           </div>
-        </section>
+        </div>
       )}
-    </section>
+    </div>
   );
 
   return [Filters, selectedFilters];
