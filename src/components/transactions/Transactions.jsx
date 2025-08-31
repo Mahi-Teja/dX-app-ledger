@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useFilters } from "../hooks/hooks.useFilter";
-import { TxnItem } from "./transactions/TxnItem";
-import { Pagination } from "./Pagination";
-import { CustomButton2 } from "./button1";
+import { useFilters } from "../../hooks/hooks.useFilter";
+import { TxnItem } from "./TxnItem";
+import { Pagination } from "../Pagination";
+import { CustomButton2 } from "../buttons/button1";
+import { Tags } from "../Tags";
+import { Button1 } from "../buttons/button1";
+import { generatePDF } from "../utils/PDF";
 
 const Transactions = () => {
   const transactions = useSelector((state) => state.transactions);
@@ -27,14 +30,16 @@ const Transactions = () => {
 
   return (
     <section className="h-screen w-full">
-      <header className="flex justify-between items-center p-4">
+      <header className="flex justify-between items-center p-4 ">
         <h2 className="text-center font-semibold">Transactions</h2>
+        <div className="w-full b mx-1 p-1 text-xs flex"></div>
         <div className="flex gap-2 items-center">
           {<Filters />}
           <CustomButton2
             label={`View  ${isViewAll ? "Less" : "All"}`}
             onClickHandler={() => setIsViewAll((prev) => !prev)}
           />
+          <button onClick={() => generatePDF(transactions)}>pdf</button>
         </div>
       </header>
 
@@ -53,7 +58,7 @@ const Transactions = () => {
 
 const AllTxns = ({ transactions }) => {
   return (
-    <section className="pb-6 h-full overflow-auto">
+    <section className="pb-6  overflow-auto">
       {transactions.length > 0 ? (
         transactions.map((transaction) => (
           <TxnItem key={transaction.id} transaction={transaction} />
