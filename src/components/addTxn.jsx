@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button1 } from "./button1";
 import { Model } from "./Model";
-import SelfTxn from "./SelfTxn";
+import SelfTxn from "./SelfTxn.jsx";
 import IncomeExpenseForm from "./IncomeExpenseForm";
 import { FreeIcons } from "../utils/icons";
 
