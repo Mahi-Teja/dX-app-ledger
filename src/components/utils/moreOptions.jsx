@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FreeIcons } from "../utils/icons"; // You can use your icon set or replace
+import { FreeIcons } from "../../utils/icons"; // You can use your icon set or replace
 
 const OptionsMenu = ({ onEdit, onDelete, onMore }) => {
   const [open, setOpen] = useState(false);

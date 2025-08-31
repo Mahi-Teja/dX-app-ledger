@@ -35,18 +35,28 @@ const DateNav = ({ selectedDate, setSelectedDate }) => {
   };
 
   return (
-    <section className="flex justify-evenly items-center py-2 gap-3 bg-indigo-400 text-indigo-50 rounded shadow">
-      <button onClick={() => changeDateBy(-1)}>{ArrowIcons.leftAngle}</button>
-
-      <button onClick={goToToday} className="font-semibold">
-        {isToday(currDate) ? "Today" : formatDisplay(currDate)}
+    <section className="grid md:flex grid-cols-8 justify-evenly items-center py-2 gap-3 bg-indigo-400 text-indigo-50 rounded shadow">
+      <button
+        className=" col-span-1 items-center"
+        onClick={() => changeDateBy(-1)}
+      >
+        {ArrowIcons.leftAngle}
       </button>
 
-      <button onClick={() => changeDateBy(1)}>{ArrowIcons.rightAngle}</button>
+      <button onClick={goToToday} className="font-semibold  col-span-2">
+        {isToday(currDate) ? `Today` : formatDisplay(currDate)}
+      </button>
+
+      <button
+        className=" self-center col-span-1"
+        onClick={() => changeDateBy(1)}
+      >
+        {ArrowIcons.rightAngle}
+      </button>
 
       <input
         type="date"
-        className="border p-1 rounded"
+        className="border p-1 rounded col-span-4"
         value={currDate.toISOString().split("T")[0]}
         onChange={handleDateInputChange}
       />

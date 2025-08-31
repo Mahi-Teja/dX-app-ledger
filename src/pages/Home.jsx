@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 // components
 import { TxnItem } from "../components/transactions/TxnItem";
-import AddTxn from "../components/addTxn";
+import AddTxn from "../components/transactions/addTxn";
 import TodaysStats from "../components/TodaysStats";
 import DateNav from "../components/DateNav";
 // Icons
@@ -69,7 +69,7 @@ const Home = () => {
 
       <AddTxn selectedDate={selectedDate} />
 
-      <section className="h-[76vh] md:h-[70vh] p-2">
+      <section className="h-[76vh] md:h-[70vh] pb-10 md:pb-4 p-2 md:p-4">
         <section className="h-[54vh] md:h-[60vh] mx-2 px-2 pb-20 rounded-xl bg-indigo-100 overflow-auto">
           <p className=" text-center sticky p-1 top-0 bg-indigo-100">
             Transactions on{" "}

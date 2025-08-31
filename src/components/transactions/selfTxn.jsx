@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Button1 } from "./button1";
-import { Model } from "./Model";
+import React, { useState } from "react";
+import { Button1 } from "../buttons/button1";
+import { Model } from "../utils/Model";
 import { useDispatch, useSelector } from "react-redux";
-import { addTransaction } from "../app/state/state.transactions";
-import { addToLocalDB } from "../utils/addToLocalDB";
-import {
-  creditAmountToAccount,
-  debitAmountToAccount,
-  selfTransactionAmount,
-} from "../app/state/state.accounts";
-import Dropdown from "../app/state/Dropdown";
+import { addTransaction } from "../../app/state/state.transactions";
+import { selfTransactionAmount } from "../../app/state/state.accounts";
 
 const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
   const dispatch = useDispatch();

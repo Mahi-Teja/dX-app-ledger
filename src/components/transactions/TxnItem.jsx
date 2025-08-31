@@ -1,206 +1,120 @@
 import { useState } from "react";
-// import { EditTxn } from "./EditTxn";
-import { CategoryIcons, FreeIcons } from "../../utils/icons";
-import { MONTHS_LIST } from "../../utils/constants";
-
-import { useSelector } from "react-redux";
-import { Model } from "../Model";
-import { CustomButton1 } from "../buttons/CustomButton1";
-import { formatDate } from "../../utils/dates";
-
-export const EditTxn = ({ txn, toggleEdit }) => {
-  const [formData, setFormData] = useState({ ...txn });
-  const accounts = useSelector((s) => s.accounts);
-  const categories = useSelector((s) => s.categories);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "amount" ? Number(value) : value,
-    }));
-  };
-
-  const handleTypeSelect = (type) => {
-    setFormData((prev) => ({ ...prev, type }));
-  };
-
-  const handleSave = () => {
-    // dispatch(updateTxn(formData));
-    toggleEdit(false);
-  };
-
-  const handleCancel = () => {
-    toggleEdit(false);
-  };
-
-  return (
-    <Model>
-      <div
-        className="bg-white p-6 rounded shadow-md w-full max-w-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="text-red-600 float-right" onClick={handleCancel}>
-          ✖
-        </button>
-
-        <div className="mt-6 space-y-4">
-          {["description", "amount"].map((field) => (
-            <div key={field}>
-              <label className="block font-semibold capitalize">{field}</label>
-              <input
-                type={field === "amount" ? "number" : "text"}
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-                autoFocus={field === "description"}
-              />
-            </div>
-          ))}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold">Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              >
-                <option disabled>Select category</option>
-                {categories?.map((c) => (
-                  <option key={c.category} value={c.category}>
-                    {c.category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-semibold">Account</label>
-              <select
-                name="account"
-                value={formData.account}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              >
-                <option disabled>Select account</option>
-                {accounts?.map((a) => (
-                  <option key={a.name} value={a.name}>
-                    {a.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="flex gap-4 mt-4">
-            {["income", "expense", "self"].map((type) => (
-              <button
-                key={type}
-                onClick={() => handleTypeSelect(type)}
-                className={`px-4 py-2 rounded ${
-                  formData.type === type
-                    ? type === "income"
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-6">
-          <CustomButton1 variant="safe" handleClick={handleSave}>
-            Save
-          </CustomButton1>
-          <CustomButton1 variant="danger" handleClick={handleCancel}>
-            Cancel
-          </CustomButton1>
-        </div>
-      </div>
-    </Model>
-  );
-};
+import { useDispatch } from "react-redux";
+import { deleteTransaction } from "../../app/state/state.transactions";
+import { format, parseISO } from "date-fns";
+import {
+  BsArrowRight,
+  BsPencilSquare,
+  BsTrash,
+  BsCurrencyRupee,
+} from "react-icons/bs";
+import { EditTxn } from "./EditTransaction"; // Make sure to use the redesigned EditTransaction component
 
 export const TxnItem = ({ transaction }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const txnDate = new Date(transaction.date);
+  const dispatch = useDispatch();
+
   const toggleExpanded = () => setIsExpanded((prev) => !prev);
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    setIsEditing(true);
+  };
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    dispatch(deleteTransaction({ id: transaction?.id }));
+    setIsEditing(false);
+  };
 
-  const TransactionSummary = () => (
-    <ul className="flex  justify-evenly items-center text-gray-900 font-medium">
-      <li className="text-sm  w-1/4">
-        {MONTHS_LIST[txnDate.getMonth()].slice(0, 3)} {txnDate.getDate()}
-      </li>
-      <li className="text-xl  w-1/4">
-        {CategoryIcons[transaction.category.icon?.toLowerCase()]}
-      </li>
-      <li className="text-lg font-semibold  w-full">
-        {transaction.description}
-      </li>
-      <li
-        className={` w-1/2 text-center ${
-          transaction.type === "self"
-            ? "font-bold text-indigo-600"
-            : transaction.type === "income"
-            ? "text-green-600 font-bold"
-            : "text-red-600 font-bold"
-        }`}
-      >
-        {transaction.type === "self"
-          ? ""
-          : transaction.type === "income"
-          ? "+"
-          : "-"}
-        {transaction.amount}
-      </li>
-    </ul>
-  );
+  const isIncome = transaction.type === "income";
+  const isSelf = transaction.type === "self";
 
-  const TransactionDetails = () => (
-    <div className="mt-4 mb-10 text-sm text-gray-700 space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          {CategoryIcons[transaction.category.icon?.toLowerCase()]}
-          <span className="font-semibold">{transaction.category.name}</span>
-        </div>
-        <button
-          className="text-blue-600 hover:text-blue-800"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditing(true);
-          }}
-        >
-          {FreeIcons.edit}
-        </button>
-      </div>
-      <p>Date: {formatDate(transaction.date).allDate}</p>
-      <p>Type: {transaction.type}</p>
-      <p>Description: {transaction.description}</p>
-      <p>Amount: ₹{transaction.amount}</p>
-      <p>Account: {transaction.account?.name}</p>
-    </div>
-  );
+  if (isEditing) {
+    return <EditTxn txn={transaction} toggleEdit={setIsEditing} />;
+  }
 
-  return isEditing ? (
-    <EditTxn txn={transaction} toggleEdit={setIsEditing} />
-  ) : (
+  return (
     <div
-      className={`txn-item m-2 p-3 rounded-lg cursor-pointer md:max-w-[60vw] mx-auto shadow-md bg-white transition-all duration-300 ease-in-out hover:scale-101 hover:shadow-lg ${
-        transaction.type === "income"
-          ? "border-l-4 border-green-500 hover:bg-green-50"
-          : "border-l-4 border-red-500 hover:bg-red-50"
+      className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out cursor-pointer p-4 mx-auto my-4 max-w-2xl
+      ${
+        isIncome ? "border-l-4 border-green-500" : "border-l-4 border-red-500"
       }`}
       onClick={toggleExpanded}
     >
-      <TransactionSummary />
-      {isExpanded && <TransactionDetails />}
+      {/* Transaction Summary */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4 flex-1 min-w-0">
+          {/* Category Icon */}
+          <div className="flex-shrink-0 text-xl text-gray-600">
+            {/* Using a component for the icon, e.g., <CategoryIcon name={transaction.category.icon} /> */}
+            <BsCurrencyRupee />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm text-gray-500">
+              {transaction.date
+                ? format(parseISO(transaction.date), "MMM d, yyyy")
+                : "N/A"}
+            </span>
+            <span className="text-lg font-semibold text-gray-900 truncate">
+              {transaction.description || "No Description"}
+            </span>
+          </div>
+        </div>
+        {/* Amount */}
+        <div className="flex items-center space-x-2 ml-4">
+          {!isSelf && (
+            <span
+              className={`text-lg font-bold ${
+                isIncome ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {isIncome ? "+" : "-"}₹{transaction.amount}
+            </span>
+          )}
+          {isSelf && (
+            <span className="text-lg font-bold text-indigo-600">
+              <BsArrowRight />
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Transaction Details (Expanded) */}
+      {isExpanded && (
+        <>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+              <span className="font-medium text-gray-500">Category:</span>
+              <span className="text-right">{transaction.category.name}</span>
+
+              <span className="font-medium text-gray-500">Account:</span>
+              <span className="text-right">
+                {transaction.account?.name || "N/A"}
+              </span>
+
+              <span className="font-medium text-gray-500">Type:</span>
+              <span className="text-right capitalize">{transaction.type}</span>
+            </div>
+          </div>
+          {/* Action Buttons */}
+          <div className="flex justify-end mt-4 space-x-3">
+            <button
+              className="text-gray-500 hover:text-blue-600 transition-colors duration-200"
+              onClick={handleEdit}
+              aria-label="Edit transaction"
+            >
+              <BsPencilSquare className="w-5 h-5" />
+            </button>
+            <button
+              className="text-gray-500 hover:text-red-600 transition-colors duration-200"
+              onClick={handleDelete}
+              aria-label="Delete transaction"
+            >
+              <BsTrash className="w-5 h-5" />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

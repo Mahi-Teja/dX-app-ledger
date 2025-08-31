@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTransaction } from "../app/state/state.transactions";
+import { addTransaction } from "../../app/state/state.transactions";
 import {
   creditAmountToAccount,
   debitAmountToAccount,
-} from "../app/state/state.accounts";
-import { Button1 } from "./button1";
-import { AddCategoryModal } from "./AddCategory";
-import { AddAccountModel } from "./AddAccount";
+} from "../../app/state/state.accounts";
+import { Button1 } from "../buttons/button1";
+import { AddCategoryModal } from "../Categories/AddCategory";
+import { AddAccountModel } from "../accounts/AddAccount";
+import SelectionView from "../SelectionView";
 
 const IncomeExpenseForm = ({
   isExpense,
@@ -115,6 +116,41 @@ const IncomeExpenseForm = ({
     setFields({ description: "", amount: "", categoryId: "", accountId: "" });
     setOpenAddTxn(false);
   };
+  if (showAddCategoryModal)
+    return (
+      <AddCategoryModal
+        onClose={() => {
+          setShowAddCategoryModal(false);
+        }}
+        onCancel={() => {
+          setShowAddCategoryModal(false);
+          setFields((prev) => ({ ...prev, categoryId: "" }));
+        }}
+        onSuccess={(newCategory) => {
+          setReturnedCategory(newCategory);
+          setFields((prev) => ({ ...prev, categoryId: newCategory.id }));
+          setShowAddCategoryModal(false);
+        }}
+      />
+    );
+
+  if (showAddAccountModal)
+    return (
+      <AddAccountModel
+        onClose={() => {
+          setShowAddAccountModal(false);
+        }}
+        onCancel={() => {
+          setShowAddAccountModal(false);
+          setFields((prev) => ({ ...prev, accountId: "" }));
+        }}
+        onSuccess={(newAccount) => {
+          setReturnedAccount(newAccount);
+          setFields((prev) => ({ ...prev, accountId: newAccount.id }));
+          setShowAddAccountModal(false);
+        }}
+      />
+    );
 
   return (
     <form className="flex flex-col gap-2">
@@ -191,7 +227,7 @@ const IncomeExpenseForm = ({
           ))}
         </select>
       </div>
-      {showAddCategoryModal && (
+      {/* {showAddCategoryModal && (
         <AddCategoryModal
           onClose={() => {
             setShowAddCategoryModal(false);
@@ -207,6 +243,7 @@ const IncomeExpenseForm = ({
           }}
         />
       )}
+      
 
       {showAddAccountModal && (
         <AddAccountModel
@@ -223,7 +260,14 @@ const IncomeExpenseForm = ({
             setShowAddAccountModal(false);
           }}
         />
-      )}
+      )} */}
+      {/* <SelectionView
+        setReturnValue={setReturnedAccount}
+        options={accounts}
+        feildName={"name"}
+        openAddModel={showAddAccountModal}
+        setOpenAddModel={setShowAddAccountModal}
+      /> */}
       <Button1 handleClick={add} className="mt-2">
         Add Transaction
       </Button1>

@@ -12,7 +12,7 @@ import store from "../store/store.js";
 
 import Home from "../pages/Home.jsx";
 import Accounts from "../pages/Accounts.jsx";
-import Txn from "../pages/Txn.jsx";
+import Txn from "../pages/Transactions.jsx";
 import { Reports } from "../pages/Reports.jsx";
 import { Profile } from "../pages/Profile.jsx";
 import Test from "../components/Test.jsx";
@@ -21,12 +21,13 @@ import { Loginn } from "../pages/Loginn.jsx";
 import { Signup } from "../pages/Signup.jsx";
 import ProtectedRoute from "../pages/Protected.jsx";
 import Nav from "../components/Nav.jsx";
-import Categories from "../components/catagories.jsx";
+import Categories from "../components/Categories/Catagories.jsx";
 import SelectedAccount from "../pages/SelectedAccount.jsx";
 import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
 import SelectedCategory from "../pages/SelectedCategory.jsx";
 import BudgetsPage from "../pages/Budgets.jsx";
-import Transactions from "../components/Transactions.jsx";
+import Transactions from "../components/Transactions/Transactions.jsx";
+import { TxnItem } from "../components/transactions/TxnItem.jsx";
 
 export const App = ({ children }) => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
@@ -147,9 +148,6 @@ export const App = ({ children }) => {
         {/* Catch-all fallback */}
         <Route path="*" element={<Signup />} />
       </Routes>
-      {/* </HashRouter> 
-      </BrowserRouter> */}
-      {/* </section> */}
     </main>
   );
 };

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { Button1 } from "./button1";
-import { Model } from "./Model";
+import { useState } from "react";
+import { Button1 } from "../buttons/button1";
+
 import SelfTxn from "./SelfTxn";
 import IncomeExpenseForm from "./IncomeExpenseForm";
-import { FreeIcons } from "../utils/icons";
+import { FreeIcons } from "../../utils/icons";
+import { Model } from "../utils/Model";
 
 const AddTxn = ({ selectedDate }) => {
   const [openAddTxn, setOpenAddTxn] = useState(false);

@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Button1 } from "../components/button1";
-import { CategoryIcons } from "../utils/icons";
-import { AddCategoryModal } from "./AddCategory";
-import { EmptyWithAction } from "./EmptyFieldText";
+import { useNavigate } from "react-router-dom";
+import { Button1 } from "../buttons/button1";
+import { AddCategoryModal } from "../Categories/AddCategory";
+import { EmptyWithAction } from "../EmptyFieldText";
+import { CategoryIcons } from "../../utils/icons";
 
 const Categories = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const categories = useSelector((state) => state.categories);
+  const navigate = useNavigate();
 
   return (
     <section className="w-full flex flex-col items-center">
@@ -41,6 +43,9 @@ const Categories = () => {
             {categories.map((cat, i) => (
               <li
                 key={i}
+                onClick={() =>
+                  navigate(`/category/${cat.category.toLowerCase()}`)
+                }
                 className="flex items-center justify-between bg-gray-100 hover:bg-blue-100 p-4 rounded-lg transition cursor-pointer"
               >
                 <span className="text-2xl text-gray-800">

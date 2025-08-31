@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Model } from "../components/Model";
+import { Model } from "../components/utils/Model";
 import {
   addBudget,
   updateBudget,
   deleteBudget,
 } from "../app/state/state.budgets";
 import { FreeIcons } from "../utils/icons";
+import { Button1 } from "../components/buttons/button1";
+import EmptyFieldText from "../components/EmptyFieldText";
 
 const BudgetsPage = () => {
   const dispatch = useDispatch();
   const budgets = useSelector((s) => s.budgets);
   const categories = useSelector((s) => s.categories);
+  const transactions = useSelector((s) => s.transactions);
 
   const [newBudget, setNewBudget] = useState({
     categoryId: "",
     allocated: "",
   });
   const [isEditOpen, setIsEditOpen] = useState(false);
+  useEffect(() => {}, []);
+  useEffect(() => {}, [transactions]);
 
   const openEditor = (budget = {}) => {
+    if (categories.length < 1) return;
     setIsEditOpen(true);
     if (budget.categoryId) {
       setNewBudget({
@@ -41,21 +47,21 @@ const BudgetsPage = () => {
 
   const handleAddBudget = () => {
     const { categoryId, allocated } = newBudget;
+
     if (!categoryId || !allocated) return;
 
-    const category = categories.find((c) => c.id === categoryId);
+    const category = categories.find((c) => c.id.toString() === categoryId);
+    console.log(categoryId, category, allocated);
     if (!category) return;
 
     const existing = budgets.find((b) => b.categoryId === categoryId);
     const newEntry = {
-      id: Date.now(),
-      categoryDetails: {
+      id: Date.now().toString(),
+      category: {
         id: category.id,
         name: category.category,
         icon: category.icon,
       },
-      categoryId,
-      category: category.category,
       icon: category.icon,
       allocated: Number(allocated),
       spent: existing?.spent || 0,
@@ -92,7 +98,11 @@ const BudgetsPage = () => {
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option
+                  key={category.id}
+                  value={category.id}
+                  onChange={handleInputChange}
+                >
                   {category.category}
                 </option>
               ))}
@@ -106,16 +116,23 @@ const BudgetsPage = () => {
               onChange={handleInputChange}
               className="border px-3 py-2 rounded w-full"
             />
-            <button
-              onClick={handleAddBudget}
-              className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            <Button1
+              handleClick={handleAddBudget}
+              className="w-full  text-white px-4 py-2 rounded "
             >
               Save Budget
-            </button>
+            </Button1>
           </div>
         </Model>
       )}
 
+      {budgets.length < 1 && (
+        <EmptyFieldText customClass={``}>
+          {categories.length < 1
+            ? `You should Have atleast One Category to Add Budget.`
+            : `No Budgets set, Set one!!`}
+        </EmptyFieldText>
+      )}
       <div className="grid gap-4  grid-cols-2 md:grid-cols-3">
         {budgets.map((b, idx) => {
           const percentage = Math.min((b.spent / b.allocated) * 100, 100);
@@ -160,17 +177,19 @@ const BudgetsPage = () => {
           );
         })}
 
-        {/* <div className="flex justify-center min-w-45 min-h-16 items-center rounded shadow bg-gray-200"> */}
-        <button
-          onClick={() => openEditor()}
-          className="text-gray-100 px-4 py-2 text-3xl flex justify-center items-center border-dashed cursor-pointer  rounded shadow bg-gray-400 text-center hover:text-gray-300"
-        >
-          {FreeIcons.add}
-        </button>
-        {/* </div>  */}
+        <AddBudgetButton handleClick={openEditor} />
       </div>
     </div>
   );
 };
+
+const AddBudgetButton = ({ handleClick }) => (
+  <button
+    onClick={(e) => handleClick(e)}
+    className="text-gray-100 px-4 py-2 text-3xl flex justify-center items-center border-dashed cursor-pointer  rounded shadow bg-gray-400 text-center hover:text-gray-300"
+  >
+    {FreeIcons.add}
+  </button>
+);
 
 export default BudgetsPage;

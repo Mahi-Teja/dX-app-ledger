@@ -199,7 +199,7 @@ export const getDaywiseAmountOfAMonth = (
 export const getCategoryWiseTxnWrtMonth = (
   categories,
   txns,
-  month,
+  month,//
   year = new Date().getFullYear()
 ) => {
   // if no categories or transactions given early return

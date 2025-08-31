@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addaccount } from "../app/state/state.accounts";
-import { Button1 } from "./button1";
-import { Model } from "./Model";
-import EmojiSelector from "./EmojiPicker"; // Ensure this is correctly imported
-import { ACCOUNT_TYPES } from "../utils/constants"; // Replace with your actual import
+import { addaccount } from "../../app/state/state.accounts";
+import { Button1 } from "../buttons/button1";
+import { Model } from "../utils/Model"; // Ensure this is correctly imported
+import { ACCOUNT_TYPES } from "../../utils/constants"; // Replace with your actual import
 
 export const AddAccountModel = ({ onClose, onSuccess, onCancel }) => {
   const dispatch = useDispatch();

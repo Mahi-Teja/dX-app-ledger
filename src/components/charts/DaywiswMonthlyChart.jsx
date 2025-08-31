@@ -1,27 +1,9 @@
+import "./chartsSetup";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-} from "chart.js";
+
 import { useSelector } from "react-redux";
 import { getDaywiseAmountOfAMonth } from "../../utils/transactionsData";
 import { MONTHS_LIST } from "../../utils/constants";
-
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale
-);
 
 const DayWiseMonthlyChart = ({
   month,

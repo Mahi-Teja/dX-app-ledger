@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import { FreeIcons } from "../utils/icons";
-import { CustomButton2 } from "../components/button1";
+import { CustomButton2 } from "../components/buttons/button1";
 
 // Supports array of strings for now (e.g., ["expense", "income"])
 // Can be extended to take array of objects with { type, title, key }
 export const useFilters = (options = []) => {
+  const fls = {
+    category: [],
+    accounts: [],
+    type: [],
+    date: ["fromdate/selectedDate", "toDate"],
+  };
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [newselectedFilters, setnewSelectedFilters] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
   const toggleFilter = (option) => {
@@ -23,6 +30,9 @@ export const useFilters = (options = []) => {
 
   const Filters = () => (
     <div className="relative">
+      {/* date */}
+      {/* categories */}
+      {/* Accounts */}
       <CustomButton2
         label={
           <span className="flex items-center gap-2">

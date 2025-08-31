@@ -15,6 +15,8 @@ const TodaysStats = React.memo(function TodaysStas({
       : type === "balance"
       ? "bg-indigo-200 text-indigo-400"
       : "";
+
+  
   return (
     <section className="bg-indigo-200 flex justify-start mx-2 md:m-2 w-full p-3 text-sm lg:text-xl rounded-md   items-center">
       <div

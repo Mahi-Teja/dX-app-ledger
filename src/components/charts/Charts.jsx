@@ -1,30 +1,13 @@
+import "./chartsSetup";
 import { Line, Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-} from "chart.js";
+
 import { useSelector } from "react-redux";
 import {
   categoryWiseTxnWrtYear,
   getCategoryAndAmount,
-} from "../utils/transactionsData";
+} from "../../utils/transactionsData";
+import React from "react";
 
-// Register components
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale
-);
 const LineChart = () => {
   const categories = useSelector((s) => s.categories);
   const transactions = useSelector((s) => s.transactions);

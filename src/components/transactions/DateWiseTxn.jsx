@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { TxnItem } from "./transactions/TxnItem";
 import { CalendarDays, Clock, Calendar } from "lucide-react"; // Icon pack, can use others
-import { getYearGroupedTxns } from "../utils/transactionsData";
-import { Pagination } from "./Pagination";
+
+import { Pagination } from "../Pagination";
+import { getYearGroupedTxns } from "../../utils/transactionsData";
 
 const DateWiseTxn = ({ transactions = [] }) => {
   const [yearWiseTxns, setYearWiseTxns] = useState(transactions || []);

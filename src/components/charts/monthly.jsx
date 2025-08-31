@@ -1,36 +1,17 @@
+import "./chartsSetup";
 import { Line, Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-} from "chart.js";
 import { useSelector } from "react-redux";
 import {
   getAnnualSpendsByMonths,
-  getCategoryAndAmount,
+  // getCategoryAndAmount,
   getCategoryWiseTxnWrtMonth,
   getDaywiseAmountOfAMonth,
-  getMonthlyTxnAmt,
+  // getMonthlyTxnAmt,
 } from "../../utils/transactionsData";
 import { MONTHS_LIST } from "../../utils/constants";
-import { useState } from "react";
-import { data } from "react-router-dom";
+// import { useState } from "react";
+// import { data } from "react-router-dom";
 
-// Register components
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale
-);
 // show indicates to render income (1), income & expense(2) or all three(3)  in one graph
 const DayWiseMonthlyChart = ({
   month,

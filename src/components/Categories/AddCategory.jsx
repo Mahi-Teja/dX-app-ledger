@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCategory } from "../app/state/state.categories";
-import { Button1 } from "./button1";
-import { Model } from "./Model";
-import { CategoryIcons, FreeIcons } from "../utils/icons";
+import { addCategory } from "../../app/state/state.categories";
+import { Button1 } from "../buttons/button1";
+import { FreeIcons } from "../../utils/icons";
+import { Model } from "../utils/Model";
 
 export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
   const dispatch = useDispatch();
@@ -11,11 +11,13 @@ export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
 
   const [type, setType] = useState("expense");
   const [categoryName, setCategoryName] = useState("");
-  const [icon, setIcon] = useState(null);
-  const [isSelected, setIsSelected] = useState(null);
+  const [emoji, setEmoji] = useState("");
   const [error, setError] = useState("");
+  const inputRef = useRef(null);
 
-  const iconsList = Object.keys(CategoryIcons);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleAdd = () => {
     const trimmedCategory = categoryName.trim();
@@ -33,20 +35,21 @@ export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
       setError("Category already exists.");
       return;
     }
+
     const newCategory = {
       type,
       category: trimmedCategory,
-      icon,
+      icon: emoji,
       id: Date.now().toString(),
     };
 
     dispatch(addCategory(newCategory));
-    onSuccess(newCategory); // Notify parent
-    onClose(); // Close modal
+    onSuccess(newCategory);
+    onClose();
   };
 
   return (
-    <Model>
+    <Model role="dialog" aria-modal="true">
       <section className="relative shadow-md rounded-xl p-6 w-full max-w-md bg-white">
         <h2 className="text-2xl font-bold mb-4 text-center">Add Category</h2>
 
@@ -81,8 +84,9 @@ export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
           ))}
         </div>
 
-        {/* Input */}
+        {/* Category Name */}
         <input
+          ref={inputRef}
           className="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
           placeholder="Category Name"
           value={categoryName}
@@ -92,32 +96,37 @@ export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
           }}
         />
 
-        {/* Icon Grid */}
-        <p className="text-xs text-center italic text-gray-500 mb-2">
-          Select an icon (optional)
-        </p>
-        <div className="grid grid-cols-5 gap-2 mb-6">
-          {iconsList.map((iconKey, i) => (
-            <div
-              key={i}
-              onClick={() => {
-                setIsSelected((prev) => (prev === i ? null : i));
-                setIcon((prevIcon) => (prevIcon === iconKey ? null : iconKey));
-              }}
-              className={`p-3 rounded-lg flex items-center justify-center cursor-pointer transition hover:bg-yellow-200 ${
-                isSelected === i ? "bg-yellow-300" : "bg-gray-100"
-              }`}
-            >
-              {CategoryIcons[iconKey]}
-            </div>
-          ))}
+        {/* Emoji Input */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1 text-gray-600">
+            Emoji (optional)
+          </label>
+          <input
+            type="text"
+            maxLength={2}
+            className="w-20 p-2 text-center border rounded-lg text-xl focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="😊"
+            value={emoji}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEmoji(val);
+            }}
+          />
+          <p className="text-xs text-gray-500 mt-1 italic">
+            Tip: Use <kbd>Win + .</kbd> (Windows) or{" "}
+            <kbd>Cmd + Ctrl + Space</kbd> (Mac) to open emoji picker.
+          </p>
         </div>
 
         {error && (
           <p className="text-red-500 text-sm text-center mb-2">{error}</p>
         )}
 
-        <Button1 handleClick={handleAdd} className="w-full">
+        <Button1
+          handleClick={handleAdd}
+          className="w-full"
+          disabled={!categoryName.trim()}
+        >
           Add Category
         </Button1>
       </section>

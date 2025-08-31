@@ -13,7 +13,11 @@ export const Pagination = ({ limit, total, list = [] }) => {
   const prevPage = () => activePage > 0 && setActivePage((prev) => prev - 1);
 
   if (!list.length)
-    return <p className="text-center py-4">No Transactions to show</p>;
+    return (
+      <p className="text-center italic font-bold rounded-lg text-indigo-200">
+        No Transactions to show
+      </p>
+    );
 
   return (
     <>

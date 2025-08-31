@@ -11,7 +11,7 @@ export const Button1 = ({
       className={`bg-indigo-600 rounded p-2 m-2 cursor-pointer text-white font-semibold ${className}`}
       onClick={(e) => {
         e.preventDefault();
-        handleClick();
+        handleClick(e);
       }}
       title={title}
     >
