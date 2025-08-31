@@ -3,9 +3,8 @@ import { useSelector } from "react-redux";
 import { useFilters } from "../../hooks/hooks.useFilter";
 import { TxnItem } from "./TxnItem";
 import { Pagination } from "../Pagination";
-import { CustomButton2 } from "../buttons/button1";
-import { Tags } from "../Tags";
-import { Button1 } from "../buttons/button1";
+// import { Tags } from "../Tags";
+import { Button1, CustomButton2 } from "../button1";
 import { generatePDF } from "../utils/PDF";
 
 const Transactions = () => {
