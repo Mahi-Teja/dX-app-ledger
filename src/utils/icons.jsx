@@ -1,105 +1,116 @@
-import { FaShoppingBag } from "react-icons/fa";
-import { GiHealthNormal } from "react-icons/gi";
-import { IoWalletOutline } from "react-icons/io5";
 import {
-  MdDirectionsTransit,
-  MdFilterAlt,
-  MdFilterAltOff,
-} from "react-icons/md";
-import { BsBank } from "react-icons/bs";
-import { MdOutlineFastfood } from "react-icons/md";
-import { FaMasksTheater } from "react-icons/fa6";
-import { RiMovieAiFill } from "react-icons/ri";
-import { BsFillFuelPumpFill } from "react-icons/bs";
-import { FaRegCreditCard } from "react-icons/fa";
-import { FaCalendarAlt } from "react-icons/fa";
-import { GoHomeFill } from "react-icons/go";
-import { FaHistory } from "react-icons/fa";
-import { MdOutlineCategory } from "react-icons/md";
-import { LiaPiggyBankSolid } from "react-icons/lia";
-import { FaUser } from "react-icons/fa";
-import { TbMoneybag } from "react-icons/tb";
-import { Fa42Group } from "react-icons/fa6";
-import { IoMdCash } from "react-icons/io";
-import { MdModeEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
-import { RiFunctionAddLine } from "react-icons/ri";
-import { RiAddLargeFill } from "react-icons/ri";
-import { MdCurrencyRupee } from "react-icons/md";
-import { BiDollar } from "react-icons/bi";
-import { IoMdMore } from "react-icons/io";
-import { IoIosMore } from "react-icons/io";
-import { GrAnalytics } from "react-icons/gr";
-import { GrTransaction } from "react-icons/gr";
-import { BsArrowRepeat } from "react-icons/bs";
-
-// arrows
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { FaArrowRight } from "react-icons/fa6";
-import { MdOutlineArrowBackIos } from "react-icons/md";
-import { MdOutlineArrowForwardIos } from "react-icons/md";
-import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import { FaArrowTrendUp } from "react-icons/fa6";
-import { FaArrowTrendDown } from "react-icons/fa6";
+  ShoppingBag,
+  HeartPulse,
+  Wallet,
+  TrainFront,
+  Filter,
+  FilterX,
+  Banknote,
+  Utensils,
+  Theater,
+  Clapperboard,
+  Fuel,
+  CreditCard,
+  Calendar,
+  Home,
+  History,
+  LayoutGrid,
+  PiggyBank,
+  User,
+  Wallet2,
+  Pencil,
+  Trash2,
+  X,
+  PlusCircle,
+  Plus,
+  IndianRupee,
+  DollarSign,
+  MoreVertical,
+  MoreHorizontal,
+  BarChart3,
+  Repeat,
+  Replace,
+  Download,
+  ArrowLeft,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  TrendingUp,
+  TrendingDown,
+  Square,
+  SquareCheck,
+  HandCoins,
+  ChartNoAxesCombined,
+  WalletCards,
+} from "lucide-react";
 
 const CategoryIcons = {
-  movies: <RiMovieAiFill />,
-  shopping: <FaShoppingBag />,
-  food: <MdOutlineFastfood />,
-  health: <GiHealthNormal />,
-  utilities: <Fa42Group />,
-  salary: <IoMdCash />,
-  train: <MdDirectionsTransit />,
-  transport: <MdDirectionsTransit />,
-  theaterMask: <FaMasksTheater />,
-  entertainment: <FaMasksTheater />,
-  bank: <BsBank />,
-  wallet: <IoWalletOutline />,
-  card: <FaRegCreditCard />,
-  calendar: <FaCalendarAlt />,
-  self: <BsArrowRepeat />,
-  fuel: <BsFillFuelPumpFill />,
+  movies: <Clapperboard />,
+  shopping: <ShoppingBag />,
+  food: <Utensils />,
+  health: <HeartPulse />,
+  utilities: <Wallet2 />,
+  salary: <Wallet />,
+  train: <TrainFront />,
+  transport: <TrainFront />,
+  theaterMask: <Theater />,
+  entertainment: <Theater />,
+  bank: <Banknote />,
+  wallet: <Wallet />,
+  card: <CreditCard />,
+  calendar: <Calendar />,
+  repeat: <Repeat />,
+  self: <Replace />,
+  fuel: <Fuel />,
+  LayoutGrid: <LayoutGrid />,
 };
+
 const FreeIcons = {
-  edit: <MdModeEdit />,
-  verticalThreeDots: <IoMdMore />,
-  horixzontalThreeDots: <IoIosMore />,
-  delete: <MdDelete />,
-  close1: <IoClose />,
-  addCategory: <RiFunctionAddLine />,
-  add: <RiAddLargeFill />,
-  inr: <MdCurrencyRupee />,
-  usd: <BiDollar />,
-  filteropen: <MdFilterAltOff />,
-  filterClosed: <MdFilterAlt />,
+  uncheckedBox:<Square />,
+  checkedBox:<SquareCheck />,
+  edit: <Pencil />,
+  download: <Download />,
+  verticalThreeDots: <MoreVertical />,
+  horixzontalThreeDots: <MoreHorizontal />,
+  delete: <Trash2 />,
+  close1: <X />,
+  addCategory: <PlusCircle />,
+  add: <Plus />,
+  inr: <IndianRupee />,
+  usd: <DollarSign />,
+  filteropen: <FilterX />,
+  filterClosed: <Filter />,
 };
+
 const AccountIcons = {
-  cash: <IoMdCash />,
-  "credit card": <FaRegCreditCard />,
-  savings: <LiaPiggyBankSolid />,
-  wallet: <IoWalletOutline />,
+  cash: <Wallet />,
+  "credit card": <CreditCard />,
+  savings: <PiggyBank />,
+  wallet: <Wallet />,
 };
+
 const ArrowIcons = {
-  left: <FaArrowLeftLong />,
-  right: <FaArrowRight />,
-  leftAngle: <MdOutlineArrowBackIos />,
-  rightAngle: <MdOutlineArrowForwardIos />,
-  leftDoubleAngle: <MdKeyboardDoubleArrowLeft />,
-  rightDoubleAngle: <MdKeyboardDoubleArrowRight />,
-  incArrow: <FaArrowTrendUp />,
-  decArrow: <FaArrowTrendDown />,
+  left: <ArrowLeft />,
+  right: <ArrowRight />,
+  leftAngle: <ChevronLeft />,
+  rightAngle: <ChevronRight />,
+  leftDoubleAngle: <ChevronsLeft />,
+  rightDoubleAngle: <ChevronsRight />,
+  incArrow: <TrendingUp />,
+  decArrow: <TrendingDown />,
 };
 
 const NavIcons = {
-  Home: <GoHomeFill />,
-  Profile: <FaUser />,
-  Transactions: <FaHistory />,
-  Categories: <MdOutlineCategory />,
-  Budgets: <TbMoneybag />,
-  Reports: <GrAnalytics />,
-  Accounts: <LiaPiggyBankSolid />,
+  Home: <Home />,
+  Profile: <User />,
+  Transactions: <History />,
+  Categories: <LayoutGrid />,
+  Budgets: <HandCoins />,
+  Reports:<ChartNoAxesCombined />,
+  Accounts1: <PiggyBank />,
+  Accounts: <WalletCards />,
 };
 
 export { CategoryIcons, NavIcons, AccountIcons, FreeIcons, ArrowIcons };

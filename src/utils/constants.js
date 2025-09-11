@@ -58,6 +58,33 @@ export const ACCOUNT_TYPES = [
   },
 ];
 
+export const BUDGET_OCCURENCE = ['WEEKLY','MONTHLY','YEARLY']
+
+export const CURRENCY_SYMBOLS = {
+    "USD": "$",  // US Dollar
+    "EUR": "€",  // Euro
+    "GBP": "£",  // British Pound Sterling
+    "JPY": "¥",  // Japanese Yen
+    "CAD": "C$", // Canadian Dollar
+    "AUD": "A$", // Australian Dollar
+    "CHF": "Fr", // Swiss Franc
+    "CNY": "¥",  // Chinese Yuan
+    "SEK": "kr", // Swedish Krona
+    "NZD": "NZ$",// New Zealand Dollar
+    "SGD": "S$", // Singapore Dollar
+    "HKD": "HK$",// Hong Kong Dollar
+    "NOK": "kr", // Norwegian Krone
+    "KRW": "₩",  // South Korean Won
+    "INR": "₹",  // Indian Rupee
+    "BRL": "R$", // Brazilian Real
+    "ZAR": "R",  // South African Rand
+    "MXN": "Mex$",// Mexican Peso
+    "PLN": "zł", // Polish Złoty
+    "THB": "฿",  // Thai Baht
+    "IDR": "Rp", // Indonesian Rupiah
+    "PHP": "₱",  // Philippine Peso
+};
+
 export const EMOJIS = [
   // 💰 General Finance
   "💰",

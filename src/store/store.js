@@ -26,8 +26,7 @@ function loadFromLocalStorage() {
 const store = configureStore({
   reducer: rootReducer,
   preloadedState: loadFromLocalStorage(),
-});
-// console.log(store.getState());
+}); 
 
 store.subscribe(() => saveToLocalStorage(store.getState()));
 
