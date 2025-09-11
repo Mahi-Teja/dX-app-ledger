@@ -1,17 +1,15 @@
 import { useState } from "react";
-
 import { Button1 } from "../components/buttons/button1";
 import { useSelector } from "react-redux";
-import EmptyFieldText from "../components/EmptyFieldText";
-
+import EmptyFieldText, { EmptyWithAction } from "../components/EmptyFieldText";
 import { AddAccountModel } from "../components/accounts/AddAccount";
 import { EditDetailsComp } from "../components/accounts/EditAccount";
 import { FreeIcons } from "../utils/icons";
 import { AccountListItem } from "../components/accounts/AcountListItem";
+import { FileX } from "lucide-react";
 
 const Accounts = () => {
   const userAccounts = useSelector((state) => state.accounts);
-  const { user } = useSelector((state) => state.user);
   const [openAddAcc, setOpenAddAcc] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editDetails, setEditDetails] = useState({});
@@ -22,51 +20,68 @@ const Accounts = () => {
     setOpenEdit(true);
     setEditDetails(acc);
   };
+  if (openAddAcc) {
+    return (
+      <AddAccountModel
+        onClose={setOpenAddAcc}
+        onCancel={() => setOpenAddAcc(false)}
+      />
+    );
+  }
 
+  if (userAccounts.length < 1) {
+    return (
+      <EmptyWithAction
+        message="No Accounts created!"
+        icon={FileX}
+        buttonText="Add Account"
+        onClick={() => setOpenAddAcc(true)}
+      />
+    );
+  }
   return (
-    <section className="m-0 w-full">
-      <section>
-        <div className="flex items-center justify-between px-4">
-          <h1 className="text-2xl font-bold">Accounts</h1>
-          <Button1
-            className="w-[25%] lg:w-auto flex justify-center items-center"
-            handleClick={toggleOpen}
-          >
-            Add {FreeIcons.add}
-          </Button1>
-        </div>
+    <section className=" w-full h-[calc(100vh-68px)] md:h-[calc(100vh-10px)] flex flex-col px-4 ">
+      {/* Header */}
+      <header className=" w-full flex justify-between items-center px-4   my-2 rounded-lg bg-white shadow-sm flex-shrink-0">
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800">
+          My Accounts
+        </h2>
+        <Button1
+          className="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm"
+          handleClick={toggleOpen}
+        >
+          Add {FreeIcons.add}
+        </Button1>
+      </header>
+      {/* <div className="flex   sm:flex-row items-center justify-between gap-3 px-4 py-3">
+        <h2 className="text-lg md:text-xl font-semibold text-gray-800">
+            Your Categories
+          </h2>
+        <Button1
+          className="flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm"
+          handleClick={toggleOpen}
+        >
+          Add {FreeIcons.add}
+        </Button1>
+      </div> */}
 
-        <div className="lg:pb-3 overflow-auto rounded-lg px-6 h-[78vh] inset-shadow-black relative">
-          {openAddAcc && (
-            <AddAccountModel
-              onClose={setOpenAddAcc}
-              // onSuccess={(newAcc) => console.log("Added:", newAcc)}
-              onCancel={() => setOpenAddAcc(false)}
+      {/* Cards Grid */}
+      {/* <div className="  h-[calc(100vh-150px)] md:h-[calc(100vh-60px)] mt-4 md:mt-6 overflow-y-auto pb-6"> */}
+      <div className="  h-[calc(100vh-150px)] md:h-[calc(100vh-20px)] mt-4   overflow-y-auto pb-6">
+        {openEdit && (
+          <EditDetailsComp editDetails={editDetails} toggleEdit={setOpenEdit} />
+        )}
+
+        <ul className="grid grid-cols-1 sm:grid-cols-2 mx-2 lg:grid-cols-3 gap-4">
+          {userAccounts.map((account) => (
+            <AccountListItem
+              key={account.id}
+              account={account}
+              handleEdit={clickEdit}
             />
-          )}
-
-          {openEdit && (
-            <EditDetailsComp
-              editDetails={editDetails}
-              toggleEdit={setOpenEdit}
-            />
-          )}
-
-          <ul className="space-y-4 overflow-auto pb-6 h-full">
-            {userAccounts.length > 0 ? (
-              userAccounts.map((account) => (
-                <AccountListItem
-                  key={account.id}
-                  account={account}
-                  handleEdit={clickEdit}
-                />
-              ))
-            ) : (
-              <EmptyFieldText>No Accounts to show, Add one</EmptyFieldText>
-            )}
-          </ul>
-        </div>
-      </section>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 };

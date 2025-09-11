@@ -16,11 +16,9 @@ const useCalculatedAmount = () => {
   let finalCatergoryAmout = {};
   let finalAccountsAmout_Names = {};
   //   const catTxns = accList.forEach((cat) => {
-  //     let am = 0;
-  //     console.log(cat);
+  //     let am = 0; 
 
-  //     transactions.forEach((element) => {
-  //       console.log(element.name);
+  //     transactions.forEach((element) => { 
 
   //       if (cat == element.account) {
   //         if (element.type == "income") {
