@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addaccount } from "../../app/state/state.accounts";
 import { Button1 } from "../buttons/button1";
-import { Model } from "../utils/Model"; // Ensure this is correctly imported
-import { ACCOUNT_TYPES } from "../../utils/constants"; // Replace with your actual import
+import { Model } from "../utils/Model";
+import { ACCOUNT_TYPES } from "../../utils/constants";
+import toast from "react-hot-toast";
 
 export const AddAccountModel = ({ onClose, onSuccess, onCancel }) => {
   const dispatch = useDispatch();
-  const [selectedValue, setSelectedValue] = useState("cash");
   const [fields, setFields] = useState({
     name: "",
     balance: "",
@@ -22,93 +22,91 @@ export const AddAccountModel = ({ onClose, onSuccess, onCancel }) => {
 
   const updateFields = (e) => {
     const { id, value } = e.target;
-
-    if (id === "balance") {
-      setFields((prev) => ({ ...prev, balance: Number(value) }));
-    } else if (id === "accType") {
-      setFields((prev) => ({ ...prev, type: value }));
-      setSelectedValue(value);
-    } else if (id === "accName") {
-      setFields((prev) => ({ ...prev, name: value }));
-    }
+    setFields((prev) => ({
+      ...prev,
+      [id === "balance" ? "balance" : id === "type" ? "type" : "name"]:
+        id === "balance" ? Number(value) : value,
+    }));
   };
 
   const handleAddAccount = () => {
     const { name, balance, type, icon } = fields;
 
     if (!name || isNaN(balance)) {
-      alert("All fields are required and balance must be a number");
+      toast.error("All fields are required and balance must be a number");
       return;
     }
 
     const newId = Date.now().toString();
-    const newAccount = {
-      id: newId,
-      name,
-      balance,
-      type,
-      icon,
-    };
+    const newAccount = { id: newId, name, balance, type, icon };
 
-    dispatch(addaccount(newAccount));
-    onSuccess?.(newAccount); // Return ID to parent
-    setFields({ name: "", balance: "", type: "cash", icon: null });
-    onClose(false);
+    try {
+      dispatch(addaccount(newAccount));
+      toast.success("Account created successfully!");
+      onSuccess?.(newAccount);
+      setFields({ name: "", balance: "", type: "cash", icon: null });
+      onClose(false);
+    } catch (error) {
+      toast.error("Failed to create account. Please try again.");
+    }
   };
 
   return (
     <Model setState={onClose}>
-      <section className="flex justify-center items-center rounded-lg relative p-8 bg-white">
-        <section className="flex flex-col w-full max-w-sm">
-          <div className="shadow-md rounded-lg p-6 mb-4">
-            <h2 className="text-xl font-bold text-center">Add Account</h2>
-            <button
-              onClick={onCancel}
-              className="absolute top-4 right-6 text-gray-500 hover:text-red-500 text-xl"
-            >
-              ×
-            </button>
-          </div>
+      <section className="flex  flex-col justify-center items-center rounded-lg relative bg-white p-6 max-w-sm mx-auto w-full  ">
+        {/* Header */}
+        <header className="flex-shrink-0 relative mb-4">
+          <h2 className="text-xl font-bold text-center">Add Account</h2>
+          <button
+            onClick={onCancel}
+            className="absolute top-0 right-0 text-gray-500 hover:text-red-500 text-2xl"
+          >
+            ×
+          </button>
+        </header>
 
-          <div className="flex flex-col">
-            <input
-              autoFocus
-              id="accName"
-              onChange={updateFields}
-              value={fields.name}
-              className="p-3 m-1 rounded border"
-              type="text"
-              placeholder="Account Name"
-            />
-            <input
-              id="balance"
-              onChange={updateFields}
-              value={fields.balance}
-              className="p-3 m-1 rounded border"
-              type="number"
-              placeholder="Balance"
-            />
-            <select
-              id="accType"
-              value={selectedValue}
-              onChange={updateFields}
-              className="p-3 m-1 rounded border bg-white text-black"
-            >
-              {ACCOUNT_TYPES.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
+        {/* Scrollable Body */}
+        <div className="  space-y-4">
+          <input
+            autoFocus
+            id="name"
+            value={fields.name}
+            onChange={updateFields}
+            className="w-full p-3 border rounded"
+            type="text"
+            placeholder="Account Name"
+          />
 
-            {/* <EmojiSelector
-              setSelectedEmoji={setSelectedEmoji}
-              selectedEmoji={selectedEmoji}
-            /> */}
-          </div>
+          <input
+            id="balance"
+            value={fields.balance}
+            onChange={updateFields}
+            className="w-full p-3 border rounded"
+            type="number"
+            placeholder="Balance"
+          />
 
-          <Button1 handleClick={handleAddAccount}>Add</Button1>
-        </section>
+          <select
+            id="type"
+            value={fields.type}
+            onChange={updateFields}
+            className="w-full p-3 border rounded bg-white text-black"
+          >
+            {ACCOUNT_TYPES.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Optional Emoji/Icon selector */}
+          {/* <EmojiSelector setSelectedEmoji={setSelectedEmoji} selectedEmoji={selectedEmoji} /> */}
+        </div>
+
+        {/* Footer / Action */}
+        <div className="mt-4 flex-shrink-0">
+          <Button1 handleClick={handleAddAccount}>Add Account</Button1>
+        </div>
       </section>
     </Model>
   );

@@ -1,14 +1,14 @@
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { updateAccount } from "../../app/state/state.accounts";
 import { ACCOUNT_TYPES } from "../../utils/constants";
 import { CustomButton1 } from "../buttons/CustomButton1";
-import { useState } from "react";
 import { Model } from "../utils/Model";
 
 export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
   const dispatch = useDispatch();
-  const [selectedType, setSelectedType] = useState(editDetails.type);
   const [editFields, setEditFields] = useState(editDetails);
+  const [selectedType, setSelectedType] = useState(editDetails.type);
 
   const updateOnChange = (e) => {
     const { name, value } = e.target;
@@ -31,14 +31,16 @@ export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
 
   return (
     <Model>
-      <section className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-lg">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-          Editing {editDetails?.name} Account
+      <section className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-black/10 shadow-lg w-full max-w-lg">
+        {/* Header */}
+        <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">
+          Edit <span className="text-indigo-600">{editDetails?.name}</span>
         </h2>
 
+        {/* Name field */}
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm text-gray-600 mb-1">
-            Name
+          <label htmlFor="name" className="block text-sm font-medium text-gray-600 mb-1">
+            Account Name
           </label>
           <input
             id="name"
@@ -46,14 +48,15 @@ export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
             name="name"
             value={editFields.name || ""}
             onChange={updateOnChange}
-            className="w-full p-3 rounded border border-gray-300 bg-white text-black"
-            placeholder="Enter name"
+            className="w-full p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 outline-none text-gray-900 placeholder-gray-400"
+            placeholder="Enter account name"
           />
         </div>
 
+        {/* Type field */}
         <div className="mb-4">
-          <label htmlFor="type" className="block text-sm text-gray-600 mb-1">
-            Type
+          <label htmlFor="type" className="block text-sm font-medium text-gray-600 mb-1">
+            Account Type
           </label>
           <select
             id="type"
@@ -63,7 +66,7 @@ export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
               setSelectedType(e.target.value);
               updateOnChange(e);
             }}
-            className="w-full p-3 rounded border border-gray-300 bg-white text-black"
+            className="w-full p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 outline-none text-gray-900"
           >
             {ACCOUNT_TYPES.map((option) => (
               <option key={option.value} value={option.value}>
@@ -73,9 +76,10 @@ export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
           </select>
         </div>
 
+        {/* Balance field */}
         <div className="mb-6">
-          <label htmlFor="balance" className="block text-sm text-gray-600 mb-1">
-            Balance
+          <label htmlFor="balance" className="block text-sm font-medium text-gray-600 mb-1">
+            Current Balance
           </label>
           <input
             id="balance"
@@ -83,17 +87,18 @@ export const EditDetailsComp = ({ editDetails, toggleEdit }) => {
             name="balance"
             value={editFields.balance}
             onChange={updateOnChange}
-            className="w-full p-3 rounded border border-gray-300 bg-white text-black"
+            className="w-full p-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 outline-none text-gray-900 placeholder-gray-400"
             placeholder="Enter balance"
           />
         </div>
 
-        <div className="flex justify-between gap-4">
-          <CustomButton1 variant="danger" handleClick={handleEdit}>
-            Save
-          </CustomButton1>
+        {/* Actions */}
+        <div className="flex justify-end gap-3">
           <CustomButton1 variant="safe" handleClick={handleCancel}>
             Cancel
+          </CustomButton1>
+          <CustomButton1 variant="danger" handleClick={handleEdit}>
+            Save
           </CustomButton1>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { deleteAccount } from "../../app/state/state.accounts";
 import { Model } from "../utils/Model";
+import toast from "react-hot-toast";
 
 export const DeleteComp = ({ setOpenState, account }) => {
   const dispatch = useDispatch();
@@ -8,6 +9,7 @@ export const DeleteComp = ({ setOpenState, account }) => {
   const handleDelete = () => {
     dispatch(deleteAccount(account));
     setOpenState(false); // Close modal after delete
+    toast.success("Account Deleted");
   };
 
   return (

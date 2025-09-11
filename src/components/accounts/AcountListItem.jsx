@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { AccountIcons, FreeIcons } from "../../utils/icons";
+import { AccountIcons } from "../../utils/icons";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { DeleteComp } from "./DeleteAccount";
+import { Pencil, Trash2, ExternalLink } from "lucide-react";
+import { CURRENCY_SYMBOLS } from "../../utils/constants";
 
 export const AccountListItem = ({ account, handleEdit }) => {
   const { user } = useSelector((state) => state.user);
@@ -10,41 +12,76 @@ export const AccountListItem = ({ account, handleEdit }) => {
   const navigate = useNavigate();
 
   return (
-    <li className="grid border grid-cols-5 justify-between bg-[#fff] gap-3 px-3 rounded-lg shadow-md p-3 my-2 hover:shadow-lg transition-shadow duration-300">
-      <div className="col-span-2 cursor-pointer flex items-center justify-start gap-3">
-        <div className="p-1 text-3xl text-[#c45959]">
-          {AccountIcons[account?.type] ?? "💼"}
-        </div>
-        <div>
-          <div className="wrap-anywhere font-semibold text-xs md:text-lg lg:text-xl">
-            {account?.name}
+    <li className="w-full">
+      <div className="flex flex-col justify-between p-4 rounded-2xl border border-black/10 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition duration-200">
+        {/* Header: Icon + Name + Actions */}
+        <div className="flex items-start justify-between">
+          {/* Left: Icon + Name + Type */}
+          <div
+            className="flex items-center gap-3 cursor-pointer min-w-0"
+            onClick={() => navigate(`/accounts/${account.id}`)}
+          >
+            <div className="flex-shrink-0 p-2 rounded-xl bg-gray-100 text-2xl text-indigo-600">
+              {AccountIcons[account?.type] ?? "💼"}
+            </div>
+            <div className="min-w-0">
+              <h3 className="font-semibold text-sm md:text-base truncate">
+                {account?.name}
+              </h3>
+              <p className="text-xs text-gray-500">{account?.type}</p>
+            </div>
           </div>
-          <div className="text-sm italic">{account?.type}</div>
+
+          {/* Right: Actions */}
+          <div className="flex gap-2">
+            <button
+              className="p-2 rounded-xl hover:bg-gray-100"
+              onClick={(e) => handleEdit(e, account)}
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+            <button
+              className="p-2 rounded-xl hover:bg-gray-100"
+              onClick={() => setOpenPopUp(true)}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <button
+              className="p-2 rounded-xl hover:bg-gray-100"
+              onClick={() => navigate(`/accounts/${account.id}`)}
+            >
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="col-span-2 p-1 bg-[#c0ffc5] text-[#000000] flex justify-center items-center px-4 py-2 rounded-lg font-bold gap-1">
-        <p className="text-2xl">{FreeIcons[user?.currency]}</p>
-        <h3 className="text-sm md:text-lg">{account?.balance}</h3>
-      </div>
-      <div className="col-span-1 flex flex-co p-1 justify-self-end align-middle">
-        <button
-          className="p-1 m-0.5 rounded cursor-pointer"
-          onClick={(e) => handleEdit(e, account)}
-        >
-          {FreeIcons.edit}
-        </button>
-        <button
-          className="p-1 m-0.5 rounded cursor-pointer"
-          onClick={() => setOpenPopUp(true)}
-        >
-          {FreeIcons.delete}
-        </button>
-        <button
-          className="p-1 m-0.5 rounded cursor-pointer"
-          onClick={() => navigate(`/accounts/${account.id}`)}
-        >
-          {FreeIcons.horixzontalThreeDots}
-        </button>
+        {/* Balances */}
+        <div className="mt-4 flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 bg-white">
+          {/* Opening Balance (subtle) */}
+          <div className="flex flex-col text-right">
+            <p className="text-xs text-gray-400">Opening balance</p>
+            <span className={`text-base font-bold ${
+                account?.initialBalance >= 0 ? "text-green-700" : "text-red-700"
+              }`}>
+              {CURRENCY_SYMBOLS[user?.currency?.toUpperCase()] || "₹"}
+              {account?.initialBalance}
+            </span>
+          </div>
+          {/* Divider */}
+          <div className="h-10 w-px bg-gray-200 mx-6" />
+
+          {/* Current Balance */}
+          <div className="flex flex-col">
+            <p className="text-xs text-gray-400">Current balance</p>
+            <span
+              className={`text-base font-bold ${
+                account?.balance >= 0 ? "text-green-700" : "text-red-700"
+              }`}
+            >
+              {CURRENCY_SYMBOLS[user?.currency?.toUpperCase()] || "₹"}
+              {account?.balance}
+            </span>
+          </div>
+        </div>
       </div>
 
       {openPopUp && (
