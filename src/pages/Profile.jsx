@@ -5,6 +5,7 @@ import { resetAccount } from "../app/state/state.accounts";
 import { resetTransactions } from "../app/state/state.transactions";
 import { resetCategory } from "../app/state/state.categories";
 import { resetUser } from "../app/state/user";
+import { resetBudgets } from "../app/state/state.budgets";
 
 export const Profile = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export const Profile = () => {
     dispatch(resetTransactions());
     dispatch(resetCategory());
     dispatch(resetUser());
+    dispatch(resetBudgets())
     navigate("/signup");
   };
 
