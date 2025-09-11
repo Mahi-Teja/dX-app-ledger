@@ -62,7 +62,7 @@ export const Signup = () => {
     } catch (error) {
       setError(true);
       setErrorMsg(error?.response?.data?.message);
-      //   console.log(error);
+      //   console.error(error);
     }
     // }
   };

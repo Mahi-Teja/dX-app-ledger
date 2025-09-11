@@ -133,8 +133,7 @@ export const AnnualMonthlySpendsChart = ({ year }) => {
   const incomeDate = labels.map((item) => annualSpendsBymonth[item].income);
   const expenseDate = labels.map((item) => annualSpendsBymonth[item].expense);
   const netDate = labels.map((item) => annualSpendsBymonth[item].net);
-
-  // console.log(labels, values);
+ 
 
   const data = {
     labels,

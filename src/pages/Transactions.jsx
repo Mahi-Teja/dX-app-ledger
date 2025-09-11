@@ -32,7 +32,18 @@ const Txn = () => {
   return (
     <section className="min-h-screen p-4 sm:p-6 md:p-10 bg-[#1a1a2e] text-[#f5f5f5] font-poppins">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#1a1a2e] pb-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+      <header className="w-full flex justify-between items-center px-4   my-2 rounded-lg bg-white shadow-sm flex-shrink-0">
+        <h2 className="text-lg md:text-xl  font-semibold text-gray-800">
+          All Transactions
+        </h2>
+        <HeaderActions
+          onAdd={() => setIsAddModalOpen(true)}
+          Filters={Filters}
+          isViewAll={isViewAll}
+          toggleView={() => setIsViewAll((prev) => !prev)}
+        />
+      </header>
+      {/* <header className="sticky top-0 z-10 bg-[#1a1a2e] pb-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Transactions
         </h1>
@@ -42,7 +53,7 @@ const Txn = () => {
           isViewAll={isViewAll}
           toggleView={() => setIsViewAll((prev) => !prev)}
         />
-      </header>
+      </header> */}
 
       {/* Body */}
       <div className="space-y-8">
@@ -73,8 +84,8 @@ const HeaderActions = ({ onAdd, Filters, isViewAll, toggleView }) => (
         aria-label="Filter transactions"
       >
         <BiFilterAlt className="text-xl" />
-        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-2 py-1 bg-white text-slate-800 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          Filters
+        <span className=" bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-2 py-1 bg-white text-slate-800 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          Filterssss
         </span>
       </button>
       {<Filters />}
@@ -132,13 +143,11 @@ const AllTxns = ({ transactions }) => {
   );
 };
 
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center text-center py-16 px-4 sm:py-20 sm:px-6 bg-[#28283d] rounded-2xl border border-[#4a4e69] text-white">
+export const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center text-center py-16 px-4 sm:py-20 sm:px-6  rounded-2xl   text-white">
     <div className="text-6xl mb-6">👛</div>
-    <h3 className="text-xl sm:text-2xl font-semibold text-white">
-      You're all caught up!
-    </h3>
-    <p className="mt-3 text-[#a0a0b0] max-w-xs sm:max-w-sm">
+    <h3 className="text-xl sm:text-2xl  text-white">You're all caught up!</h3>
+    <p className="mt-3 text-[#797991] font-semibold  max-w-xs sm:max-w-sm">
       Looks like there are no transactions here. Add a new one to get started.
     </p>
   </div>
