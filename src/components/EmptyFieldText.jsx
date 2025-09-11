@@ -1,4 +1,5 @@
 import React from "react";
+import { FolderOpen, PlusCircle } from "lucide-react"; // example icons
 
 const EmptyFieldText = ({ children, customClass }) => {
   return (
@@ -12,22 +13,34 @@ const EmptyFieldText = ({ children, customClass }) => {
 
 export default EmptyFieldText;
 
+
 export const EmptyWithAction = ({
   message = "No items found",
-  icon = "🎯",
+  icon: Icon = FolderOpen, // default icon
   buttonText = "Add New",
   onClick,
 }) => (
-  <div className="flex flex-col items-center justify-center  w-full py-16 text-center text-gray-600">
-    <div className="bg-gradient-to-b from-[#c2e8c8] to-[#9394bc] backdrop-blur-3xl  rounded-xl p-40">
-      <div className="text-6xl mb-4">{icon}</div>
-      <p className="text-lg mb-4">{message}</p>
+  <div className="flex flex-col items-center justify-center w-full py-12 px-4 text-center text-gray-600">
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 sm:p-12 max-w-sm w-full">
+      {/* Icon */}
+      <div className="mb-4 text-indigo-500">
+        <Icon size={56} strokeWidth={1.5} className="mx-auto" />
+      </div>
+
+      {/* Message */}
+      <p className="text-base sm:text-lg font-medium mb-6">{message}</p>
+
+      {/* Action Button */}
       <button
         onClick={onClick}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        className="w-full sm:w-auto mx-auto flex items-center justify-center gap-2 px-6 py-2.5 
+                   bg-indigo-600 text-white font-medium rounded-xl shadow-md
+                   hover:bg-indigo-700 active:scale-95 transition-transform duration-150"
       >
+        <PlusCircle size={18} />
         {buttonText}
       </button>
     </div>
   </div>
 );
+

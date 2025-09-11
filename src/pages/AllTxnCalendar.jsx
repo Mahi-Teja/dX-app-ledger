@@ -1,5 +1,4 @@
 import React from "react";
-import DateWiseTxn from "../components/DateWiseTxn";
 import { useSelector } from "react-redux";
 import { Pagination } from "../components/Pagination";
 

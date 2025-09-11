@@ -1,5 +1,5 @@
 export const formatDate = (datee, trim = true) => {
-  // console.log("called");
+ 
 
   const data = Date(datee);
   const formatArray = new Date(data).toUTCString().split(" ");
@@ -14,8 +14,7 @@ export const formatDate = (datee, trim = true) => {
     date,
     string: `${day} ${date} ${month},${year}`,
     date_month: `${date}/${month}`,
-  };
-  // console.log(formatArray);
+  }; 
 
   return AllData;
 };

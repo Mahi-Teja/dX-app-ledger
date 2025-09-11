@@ -1,67 +1,84 @@
-import React, { useState } from "react";
-import { TxnItem } from "./transactions/TxnItem";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import TransactionsList from "./Transactions/TransactionsList";
 
-export const Pagination = ({ limit, total, list = [] }) => {
+export const Pagination = ({ list = [], limit = 10, resetPageTrigger = 0 }) => {
   const [activePage, setActivePage] = useState(0);
 
-  const pageCount = Math.ceil(total / limit);
+  // Reset page when trigger changes (filters/view all)
+  useEffect(() => {
+    setActivePage(0);
+  }, [resetPageTrigger]);
+
+  const pageCount = Math.ceil(list.length / limit);
   const pagedItems = list.slice(activePage * limit, (activePage + 1) * limit);
 
-  const goToPage = (pageNo) => setActivePage(pageNo);
+  const goToPage = (page) => setActivePage(page);
   const nextPage = () =>
     activePage < pageCount - 1 && setActivePage((prev) => prev + 1);
   const prevPage = () => activePage > 0 && setActivePage((prev) => prev - 1);
 
-  if (!list.length)
-    return <p className="text-center py-4">No Transactions to show</p>;
+  if (!list.length) {
+    return (
+      <p className="text-center italic font-semibold text-gray-400 mt-10">
+        No items to display
+      </p>
+    );
+  }
 
   return (
-    <>
-      <ul className="h-[78vh] p-2 overflow-auto">
-        {pagedItems.map((txn) => (
-          <TxnItem key={txn.id} transaction={txn} />
-        ))}
-      </ul>
+    <div className="flex flex-col w-full h-[calc(100vh-10rem)] md:h-[calc(100vh-8rem)] bg-white/70 rounded-lg shadow-sm ">
+      {/* Transactions List */}
+      <div className="flex-1 overflow-y-auto divide-y divide-gray-200 px-2">
+        <TransactionsList transactions={pagedItems} />
+      </div>
 
-      <div className="flex justify-center gap-1 py-2">
+      {/* Pagination Controls */}
+      <div className="shrink-0 -t bg-white px-4 py-2 flex items-center justify-between">
         <PageButton
-          label="-"
+          label={<ChevronLeft />}
           onClickHandler={prevPage}
           disabled={activePage === 0}
         />
 
-        {Array.from({ length: pageCount }, (_, i) => (
-          <PageButton
-            key={i}
-            label={i + 1}
-            onClickHandler={() => goToPage(i)}
-            customClass={activePage === i ? "font-bold" : ""}
-          />
-        ))}
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+          {Array.from({ length: pageCount }, (_, i) => (
+            <PageButton
+              key={i}
+              label={i + 1}
+              onClickHandler={() => goToPage(i)}
+              active={activePage === i}
+            />
+          ))}
+        </div>
 
         <PageButton
-          label="+"
+          label={<ChevronRight />}
           onClickHandler={nextPage}
           disabled={activePage === pageCount - 1}
         />
       </div>
-    </>
+    </div>
   );
 };
 
 const PageButton = ({
   label,
   onClickHandler,
-  customClass = "",
   disabled = false,
-}) => {
-  return (
-    <button
-      disabled={disabled}
-      onClick={onClickHandler}
-      className={`p-1 w-6 rounded shadow bg-white text-sm shadow-gray-600 disabled:opacity-50 ${customClass}`}
-    >
-      {label}
-    </button>
-  );
-};
+  active = false,
+}) => (
+  <button
+    onClick={onClickHandler}
+    disabled={disabled}
+    className={`px-3 py-1 rounded shadow text-sm font-medium transition-colors
+      ${
+        active
+          ? "bg-indigo-500 text-white"
+          : "bg-white text-indigo-700 hover:bg-indigo-100"
+      }
+      disabled:opacity-50 disabled:cursor-not-allowed`}
+  >
+    {label}
+  </button>
+);

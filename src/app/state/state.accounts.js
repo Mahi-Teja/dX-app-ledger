@@ -111,8 +111,4 @@ export const {
   deleteAccount,
 } = accountSlice.actions;
 export const accountReducer = accountSlice.reducer;
-
-// const dB = JSON.parse(localStorage.getItem("dxData"));
-
-// let dbAccounts = dB?.accounts;
-// console.log(dbAccounts);
+ 

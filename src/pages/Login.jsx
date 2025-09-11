@@ -19,7 +19,6 @@ export const Login = () => {
       expense: [],
       budgets: [],
     };
-    localStorage.setItem("data", JSON.stringify(data));
     // naviagte to Home
     navigate("/");
   };

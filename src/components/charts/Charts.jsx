@@ -1,46 +1,26 @@
+import "./chartsSetup";
 import { Line, Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-} from "chart.js";
+
 import { useSelector } from "react-redux";
 import {
   categoryWiseTxnWrtYear,
   getCategoryAndAmount,
-} from "../utils/transactionsData";
+} from "../../utils/transactionsData";
+import React from "react";
 
-// Register components
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale
-);
 const LineChart = () => {
   const categories = useSelector((s) => s.categories);
   const transactions = useSelector((s) => s.transactions);
-  let list = getCategoryAndAmount(transactions, categories);
-  let d = Object.values(list);
-  let l = Object.keys(list);
-  // console.log(list, d, l);
-
-  const yearCatList = categoryWiseTxnWrtYear(transactions, categories);
+  let amountObject = getCategoryAndAmount(transactions, categories);
+  let keys = Object.keys(amountObject);
+  let values = Object.values(amountObject);
 
   const data = {
-    labels: l,
+    labels: keys,
     datasets: [
       {
         label: "amount",
-        data: categories.map((c) => list[c.category].income),
+        data: categories.map((c) => amountObject[c.category].income),
         borderColor: "rgba(75,192,192,1)",
         tension: 0.4,
         fill: false,

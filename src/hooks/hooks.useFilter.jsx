@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FreeIcons } from "../utils/icons";
-import { CustomButton2 } from "../components/button1";
+import { CustomButton2 } from "../components/buttons/button1";
 
 // Supports array of strings for now (e.g., ["expense", "income"])
 // Can be extended to take array of objects with { type, title, key }
 export const useFilters = (options = []) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
+  // const [newselectedFilters, setnewSelectedFilters] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
   const toggleFilter = (option) => {
@@ -23,10 +24,13 @@ export const useFilters = (options = []) => {
 
   const Filters = () => (
     <div className="relative">
+      {/* date */}
+      {/* categories */}
+      {/* Accounts */}
       <CustomButton2
         label={
           <span className="flex items-center gap-2">
-            Filters{" "}
+            <span className="hidden md:inline">Filters</span>
             {showFilters ? FreeIcons.filteropen : FreeIcons.filterClosed}
           </span>
         }
@@ -34,7 +38,7 @@ export const useFilters = (options = []) => {
       />
 
       {showFilters && (
-        <div className="absolute top-8 right-0 z-10 rounded shadow-2xl bg-white p-2 w-max min-w-[160px]">
+        <div className="absolute top-8 right-0 z-999 rounded shadow-2xl bg-[#ddd] p-2 w-max min-w-[160px]">
           {options.map((option) => (
             <label
               key={option}

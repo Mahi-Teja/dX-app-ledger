@@ -10,9 +10,14 @@ export const categorySlice = createSlice({
 
       state.push(newCat);
     },
+    deleteCategory: (state, action) => {
+      const id = action.payload;
+      return state.filter((cat) => cat.id !== id);
+    },
     resetCategory: () => initialState,
   },
 });
 
-export const { addCategory, resetCategory } = categorySlice.actions;
+export const { addCategory, resetCategory, deleteCategory } =
+  categorySlice.actions;
 export const categoryReducer = categorySlice.reducer;

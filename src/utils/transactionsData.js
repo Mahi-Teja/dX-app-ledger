@@ -13,8 +13,7 @@ export const getMonthlyTxnAmt = (
   let income = 0;
   txns.forEach((txn) => {
     const txnMonth = new Date(txn.date).getMonth();
-    const txnYear = new Date(txn.date).getFullYear();
-    // console.log(txnMonth, month);
+    const txnYear = new Date(txn.date).getFullYear(); 
 
     if (month == txnMonth && year == txnYear) {
       if (txn.type === "expense") {
@@ -126,8 +125,7 @@ export const getAnnualSpendsByMonths = (txns, year = currentYear) => {
 export const getCategoryAndAmount = (transactions = [], categories = []) => {
   // calculate the amount spent in each category of that month
   const categoryAndAmount = {};
-  categories.forEach((cat) => {
-    // console.log(cat);
+  categories.forEach((cat) => { 
 
     categoryAndAmount[cat.category] = { income: 0, expense: 0, net: 0 };
   });
@@ -199,7 +197,7 @@ export const getDaywiseAmountOfAMonth = (
 export const getCategoryWiseTxnWrtMonth = (
   categories,
   txns,
-  month,
+  month,//
   year = new Date().getFullYear()
 ) => {
   // if no categories or transactions given early return

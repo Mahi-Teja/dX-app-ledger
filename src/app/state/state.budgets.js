@@ -25,21 +25,22 @@ export const budgetsSlice = createSlice({
 
       return state.map((b) => {
         const updated = updatedBudgets.find(
-          (u) => u.categoryId === b.categoryId
+          (u) => u.category?.id === b.category.id
         );
         return updated ? { ...b, ...updated } : b;
       });
     },
 
-    deleteBudget: (state, action) => {
+    deleteBudget: (state, action) => { 
       const toDeleteIds = Array.isArray(action.payload)
-        ? action.payload.map((b) => b.category)
-        : [action.payload.category];
+        ? action.payload.map((b) => b.categoryId)
+        : [action.payload.categoryId];
 
-      return state.filter((b) => !toDeleteIds.includes(b.category));
+      return state.filter((b) => !toDeleteIds.includes(b.categoryId));
     },
+    resetBudgets:()=>initialState
   },
 });
 
-export const { addBudget, updateBudget, deleteBudget } = budgetsSlice.actions;
+export const { addBudget, updateBudget, deleteBudget ,resetBudgets} = budgetsSlice.actions;
 export const budgetReducer = budgetsSlice.reducer;
