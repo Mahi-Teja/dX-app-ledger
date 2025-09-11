@@ -1,130 +1,162 @@
-import React, { useState } from "react";
-import { Button1 } from "../buttons/button1";
-import { Model } from "../utils/Model";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { Button1 } from "../buttons/button1";
 import { addTransaction } from "../../app/state/state.transactions";
 import { selfTransactionAmount } from "../../app/state/state.accounts";
+import { addCategory } from "../../app/state/state.categories";
 
 const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
   const dispatch = useDispatch();
-  const transactions = useSelector((state) => state.transactions);
-  const categories = useSelector((state) => state.categories);
   const accounts = useSelector((state) => state.accounts);
+  const categories = useSelector((state) => state.categories);
 
-  // const [txns, setTxns] = useState(transactions);
-  const [fields, setFields] = useState({ to: {}, from: {}, amount: 0 });
-  const [isExpense, setIsExpense] = useState(true);
-  const filteredTo = accounts;
-  const filteredFrom = accounts.filter((acc) => acc.id != fields.to);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { from: "", to: "", amount: "" },
+  });
 
-  const add = () => {
-    if (isNaN(fields.amount)) {
-      alert("Amount should be a number");
+  const watchFrom = watch("from");
+
+  const addSelfTxn = (data) => {
+    const { from, to, amount } = data;
+    if (from === to) {
+      setError("to", { message: "From and To accounts cannot be the same" });
       return;
     }
-    if (fields.amount === 0) {
-      alert("Enter some amount");
+
+    const fromAccount = accounts.find((acc) => acc.id === from);
+    const toAccount = accounts.find((acc) => acc.id === to);
+
+    if (!fromAccount) {
+      setError("from", { message: "Please select a valid 'From' account" });
+      return;
+    }
+    if (!toAccount) {
+      setError("to", { message: "Please select a valid 'To' account" });
       return;
     }
 
-    const toAccount = accounts.find((acc) => acc.id == fields.to);
-    const fromAccount = accounts.find((acc) => acc.id == fields.from);
+    // ✅ ensure "Self Transaction" category exists
+    let selfCategory = categories.find(
+      (c) => c.name === "Self Transaction" && c.type === "self"
+    );
+    if (!selfCategory) {
+      selfCategory = {
+        id: Date.now().toString(),
+        category: "Self",
+        icon: "self",
+        type: "self",
+      };
+      dispatch(addCategory(selfCategory));
+    }
+    
 
-    if (!fromAccount || !toAccount) return alert("Select both accounts.");
-    if (fromAccount === toAccount)
-      return alert("From and To accounts cannot be the same.");
-    if (isNaN(fields.amount) || fields.amount <= 0)
-      return alert("Enter a valid amount.");
-    // new transaction object
-    const newTxn = {
-      id: Date.now().toString(), // Ideally UUID in real apps
+    // ✅ create transaction object
+    const newSelfTxn = {
+      id: Date.now().toString(),
       type: "self",
       category: {
-        id: "cat_self_txn",
-        name: "Self Transaction",
-        icon: "self",
-      }, // or use a static ID you use in category list
-      date: new Date(selectedDate).toISOString(), // Better format than UTC string
-      amount: Number(fields.amount),
-
-      // From and To (normalized structure)
-      fromAccount: {
-        id: fromAccount.id,
-        name: fromAccount.name,
+        id: selfCategory.id,
+        name: selfCategory.category,
+        icon: selfCategory.icon,
       },
-      toAccount: {
-        id: toAccount.id,
-        name: toAccount.name,
-      },
-
-      // Optional meta fields
+      date: new Date(selectedDate).toISOString(),
+      amount: parseFloat(amount),
+      fromAccount: { id: fromAccount.id, name: fromAccount.name },
+      toAccount: { id: toAccount.id, name: toAccount.name },
       description: `Transfer from '${fromAccount.name}' to '${toAccount.name}'`,
-      notes: "", // user-defined notes if needed
-      tags: [], // future tagging support
+      notes: "",
+      tags: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
-    // new account object
-    const acc = {
-      fromAccount,
-      toAccount,
-      amount: fields.amount,
-      type: "self",
-    };
-    dispatch(addTransaction(newTxn));
-    //update State : transaction, credit and debit amount to  and from account
-    dispatch(selfTransactionAmount(acc));
+    dispatch(addTransaction(newSelfTxn));
+    dispatch(
+      selfTransactionAmount({
+        fromAccount,
+        toAccount,
+        amount: parseFloat(amount),
+        type: "self",
+      })
+    );
 
-    setFields({});
+    reset();
     setOpenAddTxn(false);
   };
 
-  return accounts.length < 2 ? (
-    "Need to have min two accounts to do a self transaction."
-  ) : (
-    <form className="flex flex-col  gap-4">
-      <div className="flex flex-col gap-3 justify-center w-full  ">
-        {/* From Account */}
+  if (accounts.length < 2) {
+    return <p>Need to have at least two accounts to do a self transaction.</p>;
+  }
+
+  return (
+    <form onSubmit={handleSubmit(addSelfTxn)} className="flex flex-col gap-4">
+      {/* From Account */}
+      <div>
         <select
-          onChange={(e) => setFields({ ...fields, from: e.target.value })}
-          className="p-3  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          {...register("from", { required: "From account is required" })}
+          className="p-3 w-full rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
           <option value="">From Account</option>
-          {filteredFrom?.map((account, i) => (
-            <option key={i} value={account.id}>
-              {account.name}
-            </option>
-          ))}
+          {accounts
+            .filter((acc) => acc.id !== watch("to")) // prevent same as 'to'
+            .map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
         </select>
+        {errors.from && (
+          <p className="text-red-500 text-sm">{errors.from.message}</p>
+        )}
+      </div>
 
-        {/* To Account */}
+      {/* To Account */}
+      <div>
         <select
-          onChange={(e) => setFields({ ...fields, to: e.target.value })}
-          className="p-3  rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-600"
+          {...register("to", { required: "To account is required" })}
+          className="p-3 w-full rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-blue-400 text-gray-600"
         >
           <option value="">To Account</option>
-          {filteredTo?.map((account, i) => (
-            <option key={i} value={account.id}>
-              {account.name}
-            </option>
-          ))}
+          {accounts
+            .filter((acc) => acc.id !== watchFrom) // prevent same as 'from'
+            .map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
         </select>
+        {errors.to && (
+          <p className="text-red-500 text-sm">{errors.to.message}</p>
+        )}
+      </div>
 
-        {/* Amount */}
+      {/* Amount */}
+      <div>
         <input
           type="number"
-          required
-          value={fields.amount || ""}
           placeholder="Amount"
-          name="amount"
-          onChange={(e) =>
-            setFields({ ...fields, amount: Number(e.target.value) })
-          }
-          className="p-3 rounded-lg bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
+          {...register("amount", {
+            required: "Amount is required",
+            min: { value: 1, message: "Amount must be greater than 0" },
+          })}
+          className="p-3 w-full rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-blue-400 placeholder-gray-500"
         />
+        {errors.amount && (
+          <p className="text-red-500 text-sm">{errors.amount.message}</p>
+        )}
       </div>
-      <Button1 handleClick={add} className="mt-2">
+
+      <button type="submit" className="mt-2">
         Add Transaction
-      </Button1>
+      </button>
     </form>
   );
 };

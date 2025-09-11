@@ -1,167 +1,193 @@
 import { useState } from "react";
-import { CategoryIcons, FreeIcons } from "../../utils/icons";
-
-import { MONTHS_LIST } from "../../utils/constants";
-
 import { useDispatch, useSelector } from "react-redux";
-
-import { CustomButton1 } from "../buttons/CustomButton1";
-
-import { formatDate } from "../../utils/dates";
-
-import {
-  deleteTransaction,
-  updateTransaction,
-} from "../../app/state/state.transactions";
+import { updateTransaction } from "../../app/state/state.transactions";
 import { Model } from "../utils/Model";
+import { CustomButton1 } from "../buttons/CustomButton1";
 
 export const EditTxn = ({ txn, toggleEdit }) => {
   const [formData, setFormData] = useState({ ...txn });
-
   const accounts = useSelector((s) => s.accounts);
-
   const categories = useSelector((s) => s.categories);
-
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
-
       [name]: name === "amount" ? Number(value) : value,
     }));
   };
 
-  const handleTypeSelect = (type) => {
-    setFormData((prev) => ({ ...prev, type }));
-  };
-
+  const handleTypeSelect = (type) => setFormData((prev) => ({ ...prev, type }));
   const handleSave = () => {
-    // update the txn.
-
-    // updateTxn asks for id and updatedTxn in payload
-
-    const payload = {
-      id: txn.id,
-
-      updatedTxn: formData,
-    };
-
-    dispatch(updateTransaction(payload));
-
+    dispatch(updateTransaction({ id: txn.id, updatedTxn: formData }));
     toggleEdit(false);
   };
+  const handleCancel = () => toggleEdit(false);
 
-  const handleCancel = () => {
-    console.log("cancel");
-
-    toggleEdit(false);
+  const TYPE_COLORS = {
+    income: "bg-green-500 text-white",
+    expense: "bg-red-500 text-white",
+    self: "bg-indigo-500 text-white",
   };
 
   return (
     <Model>
       <div
-        className="bg-white p-6 rounded shadow-md w-full max-w-lg"
+        className="bg-white/50 max-w-lg w-full   md:mx-auto p-6 rounded-xl shadow-xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="text-red-600 float-right" onClick={handleCancel}>
-          ✖
+        {/* Close */}
+        <button
+          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold transition-colors"
+          onClick={handleCancel}
+        >
+          &times;
         </button>
-          {/* description and Amount */}{" "}
-        <div className="mt-6 space-y-4">
-                   {" "}
-          {["description", "amount"].map((field) => (
-            <div key={field}>
-                           {" "}
-              <label className="block font-semibold capitalize">{field}</label> 
-                         {" "}
-              <input
-                type={field === "amount" ? "number" : "text"}
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                className="w-full border rounded p-2"
-                autoFocus={field === "description"}
-              />
-            </div>
+
+        {/* Title */}
+        <h2 className="text-lg md:text-2xl font-bold text-gray-800 text-center mb-6">
+          Edit Transaction
+        </h2>
+
+        {/* Type Selector */}
+        <div className="flex justify-between md:mb-6 gap-3">
+          {["income", "expense", "self"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() => handleTypeSelect(type)}
+              className={`flex-1 py-2 rounded-lg font-semibold text-center transition-all ${
+                formData.type === type
+                  ? TYPE_COLORS[type]
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </button>
           ))}
-          {/* Time and date */}
-          <div className="mt-6 space-y-4">
-            {console.log(formData)}
+        </div>
+
+        {/* Form Fields */}
+        <div className="md:space-y-4">
+          {/* Description */}
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-medium mb-1">Description</label>
             <input
-              type="date"
-              name="date"
-              value={formData?.date}
+              type="text"
+              name="description"
+              value={formData.description}
               onChange={handleChange}
+              placeholder="Transaction description"
+              className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              autoFocus
             />
           </div>
-          {/* Category,Account and Type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Category */}
-            <div>
-              {" "}
-              <label className="block font-semibold">Category</label>
+
+          {/* Amount & Date */}
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4">
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Amount</label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="₹0"
+                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Date</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Category & Account */}
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4">
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Category</label>
               <select
                 name="category"
-                value={formData.category}
+                value={formData.category?.name || ""}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               >
-                <option disabled>Select category</option>
+                <option value="">Select category</option>
                 {categories?.map((c) => (
-                  <option key={c.category} value={c.category}>
-                    {c.category}
+                  <option key={c.id} value={c.name}>
+                    {c.name}
                   </option>
                 ))}
               </select>
             </div>
-            {/* Account */}
-            <div>
-              <label className="block font-semibold">Account</label>
-              <select
-                name="account"
-                value={formData.account}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              >
-                                <option disabled>Select account</option>       
-                {accounts?.map((a) => (
-                  <option key={a.name} value={a.name}>
-                                        {a.name}                 {" "}
-                  </option>
-                ))}
-              </select>
+
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Account</label>
+              {formData.type !== "self" ? (
+                <select
+                  name="account"
+                  value={formData.account?.name || ""}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                >
+                  <option value="">Select account</option>
+                  {accounts?.map((a) => (
+                    <option key={a.id} value={a.name}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <select
+                    name="fromAccount"
+                    value={formData.fromAccount?.name || ""}
+                    onChange={handleChange}
+                    className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  >
+                    <option value="">From account</option>
+                    {accounts?.map((a) => (
+                      <option key={a.id} value={a.name}>
+                        {a.name}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    name="toAccount"
+                    value={formData.toAccount?.name || ""}
+                    onChange={handleChange}
+                    className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  >
+                    <option value="">To account</option>
+                    {accounts?.map((a) => (
+                      <option key={a.id} value={a.name}>
+                        {a.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
-          </div>
-          {/* Type */}
-          <div className="flex gap-4 mt-4">
-            {["income", "expense", "self"].map((type) => (
-              <button
-                key={type}
-                onClick={() => handleTypeSelect(type)}
-                className={`px-4 py-2 rounded ${
-                  formData.type === type
-                    ? type === "income"
-                      ? "bg-green-500 text-white"
-                      : "bg-red-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}       
-              </button>
-            ))}
           </div>
         </div>
-        <div className="flex justify-end gap-4 mt-6">
+
+        {/* Actions */}
+        <div className="flex justify-center items-center gap-4 mt-6">
           <CustomButton1 variant="safe" handleClick={handleSave}>
             Save
           </CustomButton1>
           <CustomButton1 variant="danger" handleClick={handleCancel}>
             Cancel
           </CustomButton1>
-        </div>{" "}
+        </div>
       </div>
     </Model>
   );
