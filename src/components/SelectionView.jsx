@@ -1,16 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const SelectionView = ({ options = [], setOpenAddModel, feildName }) => {
+const SelectionView = ({
+  options = [],
+  setOpenAddModel,
+  feildName,
+  onChange,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState(null);
   const dropdownRef = useRef(null);
 
+  // filter options
   const filteredOptions = options.filter((opt) =>
-    opt[feildName]?.toLowerCase()?.includes(searchTerm.toLowerCase())
+    opt[feildName]?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Close on outside click
+  // outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -21,55 +27,57 @@ const SelectionView = ({ options = [], setOpenAddModel, feildName }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // handle option select
+  const handleSelect = (opt) => {
+    setSelectedValue(opt);
+    setSearchTerm("");
+    setIsOpen(false);
+    onChange?.(opt); // pass selected value to parent
+  };
+
   return (
     <div className="relative w-64" ref={dropdownRef}>
+      {/* Input */}
       <input
         type="text"
-        value={selectedValue[feildName]}
-        placeholder={selectedValue || "Select or Search..."}
+        value={isOpen ? searchTerm : selectedValue?.[feildName] || ""}
+        placeholder="Select or Search..."
         onChange={(e) => {
           setSearchTerm(e.target.value);
           setIsOpen(true);
         }}
         onClick={() => setIsOpen(true)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
 
+      {/* Dropdown */}
       {isOpen && (
-        <div className="reletive z-10  w-full bg-white border rounded shadow mt-1 max-h-48 overflow-auto">
-          {/* search and create one */}
-          <div className="flex flex-col">
-            {/* <div className=""> */}
-            <input type="text" />
-            {/* </div> */}
-            <div
-              className="p-2 text-blue-600 hover:underline cursor-pointer border-t"
-              onClick={() => {
-                setOpenAddModel(true);
-                setIsOpen(false);
-              }}
-            >
-              ➕ Create one
-            </div>
+        <div className="absolute z-10 w-full bg-white border rounded shadow mt-1 max-h-48 overflow-auto">
+          {/* Create one */}
+          <div
+            className="p-2 text-blue-600 hover:underline cursor-pointer border-b"
+            onClick={() => {
+              setOpenAddModel(true);
+              setIsOpen(false);
+            }}
+          >
+            ➕ Create one
           </div>
-          <div className="overflow-auto max-h-16">
-            {options.length > 0 ? (
-              options.map((opt, i) => (
-                <div
-                  key={i}
-                  className="p-2 hover:bg-gray-100 cursor-pointer "
-                  onClick={() => {
-                    setSelectedValue(opt);
-                    setIsOpen(false);
-                  }}
-                >
-                  {opt[feildName]}
-                </div>
-              ))
-            ) : (
-              <div className="p-2 text-gray-500">No matches</div>
-            )}
-          </div>
+
+          {/* Options */}
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((opt, i) => (
+              <div
+                key={i}
+                className="p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect(opt)}
+              >
+                {opt[feildName]}
+              </div>
+            ))
+          ) : (
+            <div className="p-2 text-gray-500">No matches</div>
+          )}
         </div>
       )}
     </div>
