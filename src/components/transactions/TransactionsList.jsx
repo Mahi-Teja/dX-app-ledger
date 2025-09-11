@@ -1,6 +1,6 @@
-// components/TransactionsList.jsx  
+// components/TransactionsList.jsx
 
-import TransactionTable from "./TxnWrapper2";
+import TransactionTable from "./TransactionTableWrapper";
 
 export const TransactionsList = ({ transactions, title, customClass = "" }) => {
   return (

@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 // components
-import { TxnItem } from "../components/transactions/TxnItem";
-import AddTxn from "../components/transactions/addTxn";
+import AddTxn from "../components/Transactions/addTxn";
 import TodaysStats from "../components/TodaysStats";
 import DateNav from "../components/DateNav";
 // Icons
 import { ArrowIcons } from "../utils/icons";
-import { Wallet2Icon, WalletIcon } from "lucide-react";
+import { WalletIcon } from "lucide-react";
+import { TransactionsList } from "../components/Transactions/TransactionsList";
+import Txnstable from "../components/transactions/Txnstable";
+import TransactionTable from "../components/Transactions/TransactionTableWrapper";
 
 // Helper: format date to YYYY-MM-DD
 const formatISODate = (date) => new Date(date).toISOString().split("T")[0];
 
 const Home = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [todaysExpenses, setTodaysExpenses] = useState(0);
-  const [todaysIncomes, setTodaysIncomes] = useState(0);
+  const [thisDaysStats, setThisDaysStats] = useState({
+    expense: 0,
+    income: 0,
+    net: 0,
+  });
 
   const transactions = useSelector((state) => state.transactions);
 
@@ -33,59 +38,52 @@ const Home = () => {
       { expense: 0, income: 0 }
     );
 
-    setTodaysExpenses(totals.expense);
-    setTodaysIncomes(totals.income);
+    setThisDaysStats({
+      ...totals,
+      net: Number(totals.income) - Number(totals.expense),
+    });
   }, [transactions, selectedDate]);
 
   // Today's Transactions List
-  const TodaysTxns = transactions
-    ?.filter((txn) => formatISODate(txn.date) === formatISODate(selectedDate))
-    ?.map((txn) => <TxnItem key={txn.id} transaction={txn} />);
+  const todaysTxns = transactions.filter(
+    (txn) => formatISODate(txn.date) === formatISODate(selectedDate)
+  );
 
   return (
-    <main className="flex flex-col w-full">
+    <main className=" flex flex-col flex-1 h-screen pb-20 md:pb-2 mx-4 gap-4">
+      {/* Date Navigator */}
       <DateNav selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
 
-      <section className="grid gap-2 w-full  md:text-lg grid-cols-1  md:grid-cols-3  justify-center px-2 md:p-4">
+      {/* Stats Cards */}
+      <section className="grid gap-2   grid-cols-6 justify-center justify-items-center ">
         <TodaysStats
-          stat={todaysExpenses}
+          value={thisDaysStats.expense}
           icon={<>{ArrowIcons.decArrow}</>}
-          type={"expense"}
-          statTitlel=" Expense"
+          type="expense"
+          title="Expense"
         />
         <TodaysStats
-          stat={todaysIncomes}
+          value={thisDaysStats.income}
           icon={<>{ArrowIcons.incArrow}</>}
-          statTitlel=" Income"
-          type={"income"}
+          title="Income"
+          type="income"
         />
         <TodaysStats
-          stat={todaysIncomes - todaysExpenses}
-          type={"balance"}
-          statTitlel="Balance"
-          icon={<>{<WalletIcon />}</>}
+          value={thisDaysStats.net}
+          type="balance"
+          title="Balance"
+          icon={<WalletIcon />}
         />
       </section>
 
+      {/* Add Transaction */}
       <AddTxn selectedDate={selectedDate} />
 
-      <section className="h-[76vh] md:h-[70vh] pb-10 md:pb-4 p-2 md:p-4">
-        <section className="h-[54vh] md:h-[60vh] mx-2 px-2 pb-20 rounded-xl bg-indigo-100 overflow-auto">
-          <p className=" text-center sticky p-1 top-0 bg-indigo-100">
-            Transactions on{" "}
-            <span className="font-semibold">{selectedDate.toDateString()}</span>
-          </p>
-          <div className="p-1">
-            {TodaysTxns?.length > 0 ? (
-              TodaysTxns
-            ) : (
-              <p className="text-center italic text-indigo-700">
-                No Transactions to show
-              </p>
-            )}
-          </div>
-        </section>
-      </section>
+      {/* Transactions List */}
+      <TransactionTable
+        transactions={todaysTxns}
+        title={`Transactions on ${selectedDate.toDateString()}`}
+      />
     </main>
   );
 };
