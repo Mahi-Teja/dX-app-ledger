@@ -21,8 +21,8 @@ export const getCategoryWiseTotals = (transactions = txn) => {
     } else if (transactions.type === "expense") {
       acc[catId].expense += transactions.amount;
     } else if (transactions.type === "self") {
-      acc[catId].income += transactions.amount;
-      acc[catId].expense += transactions.amount;
+      // acc[catId].income += transactions.amount;
+      // acc[catId].expense += transactions.amount;
     }
 
     // Update net

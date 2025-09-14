@@ -61,17 +61,27 @@ export const Reports = () => {
   )} */}
 
       {/* Charts Section */}
-      <section className="grid  grid-cols-1  lg:grid-cols-2 gap-6">
-        <CategoryWiseTotalChart
-          title="Category - Toatl Expenses"
-          dataSet2={categoriesTotalDataSet}
-          nameKey="category"
-          dataKey="expense"
-        />
-        <MonthlyTotalsChart
-          title={`Monthly Transactions (Income vs Expenses) - ${MONTHS_LIST[selected]}`}
-          dataSet={monthlyTotalsDataSet}
-        />
+      <section className="grid  grid-cols-1  lg:grid-cols-1  gap-6">
+        <div className="">
+          <MonthlyTotalsChart
+            title={`Monthly Transactions (Income vs Expenses) - ${MONTHS_LIST[selected]}`}
+            dataSet={monthlyTotalsDataSet}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+          <CategoryWiseTotalChart
+            title="Category - Toatl Expenses"
+            dataSet2={categoriesTotalDataSet}
+            nameKey="category"
+            dataKey="expense"
+          />
+          <CategoryWiseTotalChart
+            title="Category - Toatl Income"
+            dataSet2={categoriesTotalDataSet}
+            nameKey="category"
+            dataKey="income"
+          />
+        </div>
       </section>
     </section>
   );
