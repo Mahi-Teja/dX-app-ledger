@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button1 } from "../buttons/button1";
-
-import SelfTxn from "./SelfTxn";
+import SelfTxn from "./selfTxn";
 import IncomeExpenseForm from "./IncomeExpenseForm";
 import { FreeIcons } from "../../utils/icons";
 import { Model } from "../utils/Model";
