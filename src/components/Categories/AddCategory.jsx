@@ -7,11 +7,11 @@ import { Model } from "../utils/Model";
 import { createCategory } from "../../utils/create.helpers";
 import toast from "react-hot-toast";
 
-export const AddCategoryModal = ({ onClose, onSuccess, onCancel }) => {
+export const AddCategoryModal = ({defaultType, onClose, onSuccess, onCancel }) => {
   const dispatch = useDispatch();
-  const categories = useSelector((state) => state.categories);
+  const categories = useSelector((state) => state.categories); 
 
-  const [type, setType] = useState("expense");
+  const [type, setType] = useState(defaultType);
   const [categoryName, setCategoryName] = useState("");
   const [emoji, setEmoji] = useState("");
   const [error, setError] = useState("");

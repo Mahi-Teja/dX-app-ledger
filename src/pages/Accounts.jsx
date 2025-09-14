@@ -27,7 +27,8 @@ const Accounts = () => {
         onCancel={() => setOpenAddAcc(false)}
       />
     );
-  }
+  } 
+  
 
   if (userAccounts.length < 1) {
     return (
@@ -39,6 +40,8 @@ const Accounts = () => {
       />
     );
   }
+ 
+  
   return (
     <section className=" w-full h-[calc(100vh-68px)] md:h-[calc(100vh-10px)] flex flex-col px-4 ">
       {/* Header */}

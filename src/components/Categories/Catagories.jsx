@@ -23,7 +23,7 @@ const Categories = () => {
     try {
       if (deleteTarget) {
         dispatch(deleteCategory(deleteTarget.id));
-//TODO: delete budget with this category
+        //TODO: delete budget with this category
 
         toast.success(`Category Deleted`);
 
@@ -56,6 +56,7 @@ const Categories = () => {
       {/* Add Category Modal */}
       {openAddModal && (
         <AddCategoryModal
+          defaultType={"expense"}
           onClose={() => setOpenAddModal(false)}
           onSuccess={() => setOpenAddModal(false)}
           onCancel={() => setOpenAddModal(false)}
@@ -121,9 +122,9 @@ const Categories = () => {
 
                 {/* Actions */}
                 <div className="flex flex-col items-end gap-2">
-                  <IconButton handleClick={() => {}}>
+                  {/* <IconButton handleClick={() => {}}>
                     <Pencil size={16} />
-                  </IconButton>
+                  </IconButton> */}
 
                   <IconButton
                     handleClick={() => {

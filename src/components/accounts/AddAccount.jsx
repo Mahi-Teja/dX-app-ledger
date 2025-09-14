@@ -106,6 +106,7 @@ export const AddAccountModel = ({ onClose, onSuccess, onCancel }) => {
         {/* Footer / Action */}
         <div className="mt-4 flex-shrink-0">
           <Button1 handleClick={handleAddAccount}>Add Account</Button1>
+          <Button1  handleClick={onClose}>Cancel</Button1>
         </div>
       </section>
     </Model>
