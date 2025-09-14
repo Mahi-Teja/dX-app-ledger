@@ -19,6 +19,9 @@ const SelectedCategory = () => {
   const [filteredTxns, setFilteredTxns] = useState([]);
   const [totals, setTotals] = useState({ income: 0, expense: 0, net: 0 });
 
+  const itIsSelfCategory =
+    selectedCategory.type === "self" ||
+    selectedCategory.category.toLowerCase() === "self";
   useEffect(() => {
     if (!selectedCategory) {
       navigate("/404");
@@ -83,41 +86,46 @@ const SelectedCategory = () => {
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-[11px] uppercase tracking-wide text-gray-500">
-                Net Balance
-              </p>
-              <p
-                className={`text-xl sm:text-2xl font-bold leading-tight ${
-                  totals.net >= 0 ? "text-green-700" : "text-red-700"
-                }`}
-              >
-                {fmt(totals.net)}
-              </p>
-            </div>
+            {/* Balnce */}
+            {!itIsSelfCategory && (
+              <div className="text-right">
+                <p className="text-[11px] uppercase tracking-wide text-gray-500">
+                  Net Balance
+                </p>
+                <p
+                  className={`text-xl sm:text-2xl font-bold leading-tight ${
+                    totals.net >= 0 ? "text-green-700" : "text-red-700"
+                  }`}
+                >
+                  {fmt(totals.net)}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Stats row */}
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-            <StatChip
-              label="Income"
-              value={fmt(totals.income)}
-              icon={<ArrowDownRight className="w-4 h-4" aria-hidden />}
-              hint="Money in"
-            />
-            <StatChip
-              label="Expense"
-              value={fmt(totals.expense)}
-              icon={<ArrowUpRight className="w-4 h-4" aria-hidden />}
-              hint="Money out"
-            />
-            <StatChip
-              label="Net Change"
-              value={fmt(totals.net)}
-              icon={<ArrowUpRight className="w-4 h-4" aria-hidden />}
-              hint="Income − Expense"
-            />
-          </div>
+          {!itIsSelfCategory && (
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+              <StatChip
+                label="Income"
+                value={fmt(totals.income)}
+                icon={<ArrowDownRight className="w-4 h-4" aria-hidden />}
+                hint="Money in"
+              />
+              <StatChip
+                label="Expense"
+                value={fmt(totals.expense)}
+                icon={<ArrowUpRight className="w-4 h-4" aria-hidden />}
+                hint="Money out"
+              />
+              <StatChip
+                label="Net Change"
+                value={fmt(totals.net)}
+                icon={<ArrowUpRight className="w-4 h-4" aria-hidden />}
+                hint="Income − Expense"
+              />
+            </div>
+          )}
         </div>
       </header>
 

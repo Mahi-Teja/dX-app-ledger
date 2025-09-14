@@ -6,6 +6,7 @@ import BackButton from "../components/utils/BackPage";
 import { StatChip } from "./SelectedCategory";
 import { AccountIcons } from "../utils/icons";
 import { TransactionsList } from "../components/Transactions/TransactionsList";
+import { sortTransactions } from "../utils/sortTransactions.helper";
 
 const SelectedAccount = () => {
   const { id } = useParams();
@@ -30,9 +31,20 @@ const SelectedAccount = () => {
     setSelectedAccount(account);
 
     // filter transactions belonging to this account
-    const relatedTxns = transactions.filter((txn) =>
-      txn.type == "self" ? txn.fromAccount.id : txn.account.id === account.id
+    const relatedTxns = sortTransactions(
+      transactions.filter((txn) =>
+        txn.type == "self"
+          ? txn.fromAccount.id === account.id || txn.toAccount.id === account.id
+          : txn.account.id === account.id
+      )
     );
+    // const relatedTxns = transactions.map((txn) => {
+    //   if (txn.type == "self") {
+    //     txn.fromAccount?.id === account.id;??
+    //   } else {
+    //     txn.account.id === account.id;
+    //   }
+    // });
     setTxns(relatedTxns);
     // totals
     const income = relatedTxns
@@ -53,14 +65,14 @@ const SelectedAccount = () => {
   if (!selectedAccount) return null;
 
   return (
-    <section className="px-6 max-w-screen space-y-4">
+    <section className="px-2 max-w-[1200px] lg:mx-auto flex flex-col flex-1 h-full space-y-2">
       {/* Back button and page title */}
-      <div className=" flex items-center gap-4">
-        <span className="md:hidden">
+      <div className=" flex items-center mt-2 p-1 rounded bg-white">
+        <span className="mx-4">
           <BackButton />
         </span>
-        <h1 className="md:text-2xl font-semibold text-gray-800">
-          Account Details
+        <h1 className="text-center  md:text-xl self-center font-semibold text-gray-800">
+          Acount Details
         </h1>
       </div>
       <AccountHeader
