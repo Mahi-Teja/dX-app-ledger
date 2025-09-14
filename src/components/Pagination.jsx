@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import TransactionsList from "./Transactions/TransactionsList";
 
+
 export const Pagination = ({ list = [], limit = 10, resetPageTrigger = 0 }) => {
   const [activePage, setActivePage] = useState(0);
 
@@ -29,12 +30,12 @@ export const Pagination = ({ list = [], limit = 10, resetPageTrigger = 0 }) => {
   return (
     <div className="flex flex-col w-full h-[calc(100vh-10rem)] md:h-[calc(100vh-8rem)] bg-white/70 rounded-lg shadow-sm ">
       {/* Transactions List */}
-      <div className="flex-1 overflow-y-auto divide-y divide-gray-200 px-2">
+      <div className="flex-1 overflow-y-auto divide-y divide-gray-200 ">
         <TransactionsList transactions={pagedItems} />
       </div>
 
       {/* Pagination Controls */}
-      <div className="shrink-0 -t bg-white px-4 py-2 flex items-center justify-between">
+      <div className="shrink-0 -t bg-white px-4 py-2 flex items-center justify-center">
         <PageButton
           label={<ChevronLeft />}
           onClickHandler={prevPage}

@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { LayoutGrid } from "lucide-react";
 
 const createCategory = (type, category, Icon) => {
@@ -5,7 +6,7 @@ const createCategory = (type, category, Icon) => {
     type,
     category,
     Icon: Icon || 'LayoutGrid',
-    id: crypto.randomUUID(),
+    id:uuidv4(),
   };
 };
 
