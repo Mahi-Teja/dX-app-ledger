@@ -13,7 +13,8 @@ import Categories from "../components/Categories/Catagories.jsx";
 import SelectedAccount from "../pages/SelectedAccount.jsx";
 import SelectedCategory from "../pages/SelectedCategory.jsx";
 import BudgetsPage from "../pages/Budgets.jsx";
-import { Transactions } from "../components/transactions/Transactions.jsx";
+import Transactions from "../components/transactions/Transactions.jsx";
+
 import { Toaster } from "react-hot-toast";
 
 import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";

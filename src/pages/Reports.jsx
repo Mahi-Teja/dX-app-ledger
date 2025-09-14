@@ -1,5 +1,5 @@
 import { WalletIcon } from "lucide-react";
-import Dropdown from "../app/state/Dropdown";
+import Dropdown from "../components/utils/Dropdown";
 import { MONTHS_LIST } from "../utils/constants";
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
