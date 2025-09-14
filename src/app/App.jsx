@@ -4,7 +4,6 @@ import Home from "../pages/Home.jsx";
 import Accounts from "../pages/Accounts.jsx";
 import { Reports } from "../pages/Reports.jsx";
 import { Profile } from "../pages/Profile.jsx";
-import Test from "../components/Test.jsx";
 import { Login } from "../pages/Login.jsx";
 import { Loginn } from "../pages/Loginn.jsx";
 import { Signup } from "../pages/Signup.jsx";
@@ -12,12 +11,13 @@ import ProtectedRoute from "../pages/Protected.jsx";
 import Nav from "../components/Nav.jsx";
 import Categories from "../components/Categories/Catagories.jsx";
 import SelectedAccount from "../pages/SelectedAccount.jsx";
-import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
-// import SelectedCategory from "../pages/SelectedCategory.jsx";
+import SelectedCategory from "../pages/SelectedCategory.jsx";
 import BudgetsPage from "../pages/Budgets.jsx";
 import Transactions from "../components/Transactions/Transactions.jsx";
 import { Toaster } from "react-hot-toast";
-import { Budgets } from "../pages/Budgets2.jsx";
+
+import AllTxnCalendar from "../pages/AllTxnCalendar.jsx";
+import Test from "../components/Test.jsx";
 
 export const App = () => {
   const dB = JSON.parse(localStorage.getItem("dxData"));
@@ -31,7 +31,6 @@ export const App = () => {
     <main className="bg-indigo-300 lg:mx-auto max-w-[1400px] min-h-screen box-border flex">
       <Toaster />
       {showNavPath && <Nav />}
-
       <section className="flex-1 overflow-y-auto">
         <Routes>
           {/* Public Routes */}
@@ -79,14 +78,7 @@ export const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/txns"
-            element={
-              <ProtectedRoute>
-                <AllTxnCalendar />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/category"
             element={
@@ -103,7 +95,6 @@ export const App = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/reports"
             element={
@@ -136,14 +127,22 @@ export const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/test"
-            element={
-              <ProtectedRoute>
-                <Test />
-              </ProtectedRoute>
-            }
-          />
+          {/* <Route
+          path="/txns"
+          element={
+            <ProtectedRoute>
+              <AllTxnCalendar />
+            </ProtectedRoute>
+          }
+        /> */}
+          {/* <Route
+          path="/test"
+          element={
+            <ProtectedRoute>
+              <Test />
+            </ProtectedRoute>
+          } 
+        /> */}
 
           {/* Catch-all fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

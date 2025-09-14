@@ -2,25 +2,31 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useFilters } from "../../hooks/hooks.useFilter";
 import { Pagination } from "../Pagination";
-import {   Button1 } from "../buttons/button1";
+// import { Tags } from "../Tags"; 
 import { generatePDF } from "../utils/PDF";
 import { FreeIcons } from "../../utils/icons";
 import { Dialoge } from "../Dialoge"; 
 import TransactionTable from "./TransactionTableWrapper";
+import { Button1 } from "../buttons/button1";
+import dummyTxn from "../../utils/sample_transactions.json"
 
 const Transactions = () => {
   const transactions = useSelector((state) => state.transactions);
   // const categories = useSelector((state) => state.categories);
 
-  const [isViewAll, ] = useState(false);
+  const [isViewAll, setIsViewAll] = useState(false);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
 
   const filterOptions = ["expense", "income"];
   const [Filters, selectedFilters] = useFilters(filterOptions);
 
+  // const sortedTransactions = useMemo(
+  //   () => [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date)),
+  //   [transactions]
+  // );
   const sortedTransactions = useMemo(
-    () => [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date)),
-    [transactions]
+    () =>dummyTxn.sort((a, b) => new Date(b.date) - new Date(a.date)),
+    []
   );
 
   const filteredTransactions = useMemo(
@@ -44,10 +50,10 @@ const Transactions = () => {
           <Filters />
 
           {/* Toggle View */}
-          {/* <CustomButton2
-            label={`View ${isViewAll ? "Less" : "All"}`}
-            onClickHandler={() => setIsViewAll((prev) => !prev)}
-          /> */}
+          <Button1
+            title={`View ${isViewAll ? "Less" : "All"}`}
+            handleClick={() => setIsViewAll((prev) => !prev)}
+          >View  {isViewAll ? "Less" : "All"}</Button1>
 
           {/* Download PDF */}
           {transactions.length > 0 && (
@@ -77,12 +83,11 @@ const Transactions = () => {
       </header>
 
       {/* Transaction List */}
-      <div className={`overflow-y-auto   rounded-xl    `}>
+      <div className={`overflow-y-auto  border rounded-xl    `}>
         {filteredTransactions.length > 0 ? (
           isViewAll ? (
             <TransactionTable
-              transactions={filteredTransactions}
-              title={`Transactions on  `}
+              transactions={filteredTransactions} 
             />
           ) : (
             <Pagination
