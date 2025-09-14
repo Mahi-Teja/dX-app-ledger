@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTransaction } from "../../app/state/state.transactions";
 import { selfTransactionAmount } from "../../app/state/state.accounts";
 import { addCategory } from "../../app/state/state.categories";
-import { createCategory } from "../../utils/create.helpers"; 
+import { createCategory } from "../../utils/create.helpers";
 
 import toast from "react-hot-toast";
 
@@ -151,7 +151,10 @@ const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
         )}
       </div>
 
-      <button type="submit" className="mt-2">
+      <button
+        type="submit"
+        className={`bg-indigo-600 rounded p-2 m-2 cursor-pointer text-white font-semibold`}
+      >
         Add Transaction
       </button>
     </form>
