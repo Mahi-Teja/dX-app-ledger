@@ -1,7 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import TransactionsList from "./Transactions/TransactionsList";
-
+import TransactionsList from "./transactions/TransactionsList";
 
 export const Pagination = ({ list = [], limit = 10, resetPageTrigger = 0 }) => {
   const [activePage, setActivePage] = useState(0);

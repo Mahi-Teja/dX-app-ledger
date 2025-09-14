@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Wallet2, ArrowDownRight, ArrowUpRight, Activity } from "lucide-react";
 import BackButton from "../components/utils/BackPage";
 import { CURRENCY_SYMBOLS } from "../utils/constants";
-import { TransactionsList } from "../components/Transactions/TransactionsList";
+import { TransactionsList } from "../components/transactions/TransactionsList";
 
 const SelectedCategory = () => {
   const { name, id } = useParams();

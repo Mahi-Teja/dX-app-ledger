@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 // components
-import AddTxn from "../components/Transactions/addTxn";
 import TodaysStats from "../components/TodaysStats";
 import DateNav from "../components/DateNav";
+import AddTxn from "../components/transactions/addTxn";
+import TransactionTable from "../components/transactions/TransactionTableWrapper";
+import { TransactionsList } from "../components/transactions/TransactionsList";
 // Icons
 import { ArrowIcons } from "../utils/icons";
 import { WalletIcon } from "lucide-react";
-import { TransactionsList } from "../components/Transactions/TransactionsList";
 import Txnstable from "../components/transactions/Txnstable";
-import TransactionTable from "../components/Transactions/TransactionTableWrapper";
 
 // Helper: format date to YYYY-MM-DD
 const formatISODate = (date) => new Date(date).toISOString().split("T")[0];

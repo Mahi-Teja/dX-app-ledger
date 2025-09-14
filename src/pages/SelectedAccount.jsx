@@ -5,7 +5,7 @@ import { Wallet2, ArrowDownRight, ArrowUpRight, Activity } from "lucide-react";
 import BackButton from "../components/utils/BackPage";
 import { StatChip } from "./SelectedCategory";
 import { AccountIcons } from "../utils/icons";
-import { TransactionsList } from "../components/Transactions/TransactionsList";
+import { TransactionsList } from "../components/transactions/TransactionsList";
 import { sortTransactions } from "../utils/sortTransactions.helper";
 
 const SelectedAccount = () => {
