@@ -1,12 +1,11 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { Button1 } from "../buttons/button1";
 import { addTransaction } from "../../app/state/state.transactions";
 import { selfTransactionAmount } from "../../app/state/state.accounts";
 import { addCategory } from "../../app/state/state.categories";
+import { createCategory } from "../../utils/create.helpers"; 
+
 import toast from "react-hot-toast";
-import { createCategory } from "../../utils/create.helpers";
 
 const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
   const dispatch = useDispatch();
