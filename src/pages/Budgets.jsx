@@ -8,14 +8,14 @@ import {
 } from "../app/state/state.budgets";
 import { CategoryIcons, FreeIcons } from "../utils/icons";
 import { Button1 } from "../components/buttons/button1";
-import EmptyFieldText from "../components/EmptyFieldText";
+import EmptyFieldText, { EmptyWithAction } from "../components/EmptyFieldText";
 import toast from "react-hot-toast";
 import { getCategoryAndAmount } from "../utils/transactionsData";
 import { BUDGET_OCCURENCE } from "../utils/constants";
 import { useForm } from "react-hook-form";
 import ErrorInput from "../components/utils/ErrorInput";
 import { format, isValid } from "date-fns";
-import { LoaderCircle } from "lucide-react";
+import { FileX, LoaderCircle } from "lucide-react";
 import { Pencil, Trash2 } from "lucide-react";
 import IconButton from "../utils/IconButton";
 import { AlertTriangle } from "lucide-react";
@@ -80,15 +80,21 @@ const BudgetsPage = () => {
     dispatch(deleteBudget(budgetToDelete));
   };
 
-  {
-    budgets.length < 1 && (
-      <EmptyFieldText>
-        {categories.length < 1
-          ? "You need at least one Category before adding a Budget."
-          : "No Budgets set yet. Create one!"}
-      </EmptyFieldText>
+  if (budgets.length < 1 && !isEditOpen)
+    return (
+      <EmptyWithAction
+        message="No Budgets created!"
+        icon={FileX}
+        buttonText="Add Budget"
+        onClick={() => {
+          categories.length > 0
+            ? setIsEditOpen(true)
+            : toast.error(
+                "You need a category to create a budget. Add one to continue."
+              );
+        }}
+      />
     );
-  } 
 
   return (
     <div className="  flex flex-col  pb-18 md:pb-2 h-screen mx-auto px-4 space-y-4">
@@ -98,7 +104,9 @@ const BudgetsPage = () => {
         </h2>
         <Button1
           className="flex invisible items-center gap-2 px-4 py-2 rounded-lg shadow-sm"
-          handleClick={() => {}}
+          handleClick={() => {
+            setIsEditOpen(true);
+          }}
         >
           Add {FreeIcons.add}
         </Button1>
@@ -115,23 +123,22 @@ const BudgetsPage = () => {
 
       {/* Budget List */}
       <div className="  h-[calc(100vh-150px)] md:h-[calc(100vh-20px)] mt-4   overflow-y-auto pb-6">
-
-      <div className="grid gap-4 grid-cols-1 mx-2 pb-6 overflow-auto sm:grid-cols-2 md:grid-cols-2">
-        {budgets.map((budget) => {
-          return (
-            <BudgetListItem
-              key={budget.id}
-              budget={budget}
-              transactions={transactions}
-              categories={categories}
-              calculateBudgetSpent={calculateBudgetSpent}
-              handleDelete={handleDelete}
-              openEditor={openEditor}
-            />
-          );
-        })}
-        <AddBudgetButton handleClick={openAddModel} />
-      </div>
+        <div className="grid gap-4 grid-cols-1 mx-2 pb-6 overflow-auto sm:grid-cols-2 md:grid-cols-2">
+          {budgets.map((budget) => {
+            return (
+              <BudgetListItem
+                key={budget.id}
+                budget={budget}
+                transactions={transactions}
+                categories={categories}
+                calculateBudgetSpent={calculateBudgetSpent}
+                handleDelete={handleDelete}
+                openEditor={openEditor}
+              />
+            );
+          })}
+          <AddBudgetButton handleClick={openAddModel} />
+        </div>
       </div>
     </div>
   );
