@@ -1,28 +1,31 @@
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTransaction } from "../../app/state/state.transactions";
 import { Model } from "../utils/Model";
 import { CustomButton1 } from "../buttons/CustomButton1";
 
 export const EditTxn = ({ txn, toggleEdit }) => {
-  const [formData, setFormData] = useState({ ...txn });
   const accounts = useSelector((s) => s.accounts);
   const categories = useSelector((s) => s.categories);
   const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "amount" ? Number(value) : value,
-    }));
-  };
+  // ✅ setup RHF with default values
+  const { register, handleSubmit, control, watch, setValue } = useForm({
+    defaultValues: {
+      ...txn,
+      amount: Number(txn.amount),
+    },
+  });
 
-  const handleTypeSelect = (type) => setFormData((prev) => ({ ...prev, type }));
-  const handleSave = () => {
-    dispatch(updateTransaction({ id: txn.id, updatedTxn: formData }));
+  const type = watch("type");
+  const TypesOptions = type === "self" ? ["self"] : ["income", "expense"];
+
+  const onSubmit = (data) => {
+    data.account = accounts.find((cat) => cat.id === data.account);
+    dispatch(updateTransaction({ id: txn.id, updatedTxn: data }));
     toggleEdit(false);
   };
+
   const handleCancel = () => toggleEdit(false);
 
   const TYPE_COLORS = {
@@ -34,7 +37,7 @@ export const EditTxn = ({ txn, toggleEdit }) => {
   return (
     <Model>
       <div
-        className="bg-white/50 max-w-lg w-full   md:mx-auto p-6 rounded-xl shadow-xl relative"
+        className="bg-white/50 max-w-lg w-full md:mx-auto p-6 rounded-xl shadow-xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
@@ -45,39 +48,37 @@ export const EditTxn = ({ txn, toggleEdit }) => {
           &times;
         </button>
 
-        {/* Title */}
         <h2 className="text-lg md:text-2xl font-bold text-gray-800 text-center mb-6">
           Edit Transaction
         </h2>
 
-        {/* Type Selector */}
-        <div className="flex justify-between md:mb-6 gap-3">
-          {["income", "expense", "self"].map((type) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => handleTypeSelect(type)}
-              className={`flex-1 py-2 rounded-lg font-semibold text-center transition-all ${
-                formData.type === type
-                  ? TYPE_COLORS[type]
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
-        </div>
+        {/* RHF form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Type Selector */}
+          <div className="flex justify-between gap-3">
+            {TypesOptions.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setValue("type", t)}
+                className={`flex-1 py-2 rounded-lg font-semibold text-center transition-all ${
+                  type === t
+                    ? TYPE_COLORS[t]
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
 
-        {/* Form Fields */}
-        <div className="md:space-y-4">
           {/* Description */}
           <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">Description</label>
+            <label className="text-gray-700 font-medium mb-1">
+              Description
+            </label>
             <input
-              type="text"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
+              {...register("description")}
               placeholder="Transaction description"
               className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               autoFocus
@@ -90,9 +91,7 @@ export const EditTxn = ({ txn, toggleEdit }) => {
               <label className="text-gray-700 font-medium mb-1">Amount</label>
               <input
                 type="number"
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
+                {...register("amount", { valueAsNumber: true })}
                 placeholder="₹0"
                 className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
@@ -102,9 +101,7 @@ export const EditTxn = ({ txn, toggleEdit }) => {
               <label className="text-gray-700 font-medium mb-1">Date</label>
               <input
                 type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
+                {...register("date")}
                 className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               />
             </div>
@@ -112,35 +109,36 @@ export const EditTxn = ({ txn, toggleEdit }) => {
 
           {/* Category & Account */}
           <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4">
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">Category</label>
-              <select
-                name="category"
-                value={formData.category?.name || ""}
-                onChange={handleChange}
-                className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              >
-                <option value="">Select category</option>
-                {categories?.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+            {/* category */}
+            {type !== "self" && (
+              <div className="flex flex-col">
+                <label className="text-gray-700 font-medium mb-1">
+                  Category
+                </label>
+                <select
+                  {...register("category")}
+                  className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                >
+                  <option value="">Select category</option>
+                  {categories?.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {/* account */}
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Account</label>
-              {formData.type !== "self" ? (
+              {type !== "self" ? (
                 <select
-                  name="account"
-                  value={formData.account?.name || ""}
-                  onChange={handleChange}
+                  {...register("account")}
                   className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 >
                   <option value="">Select account</option>
                   {accounts?.map((a) => (
-                    <option key={a.id} value={a.name}>
+                    <option key={a.id} value={a.id}>
                       {a.name}
                     </option>
                   ))}
@@ -148,9 +146,7 @@ export const EditTxn = ({ txn, toggleEdit }) => {
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   <select
-                    name="fromAccount"
-                    value={formData.fromAccount?.name || ""}
-                    onChange={handleChange}
+                    {...register("fromAccount")}
                     className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                   >
                     <option value="">From account</option>
@@ -161,9 +157,7 @@ export const EditTxn = ({ txn, toggleEdit }) => {
                     ))}
                   </select>
                   <select
-                    name="toAccount"
-                    value={formData.toAccount?.name || ""}
-                    onChange={handleChange}
+                    {...register("toAccount")}
                     className="border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                   >
                     <option value="">To account</option>
@@ -177,17 +171,21 @@ export const EditTxn = ({ txn, toggleEdit }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="flex justify-center items-center gap-4 mt-6">
-          <CustomButton1 variant="safe" handleClick={handleSave}>
-            Save
-          </CustomButton1>
-          <CustomButton1 variant="danger" handleClick={handleCancel}>
-            Cancel
-          </CustomButton1>
-        </div>
+          {/* Actions */}
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <CustomButton1 variant="safe" type="submit">
+              Save
+            </CustomButton1>
+            <CustomButton1
+              variant="danger"
+              type="button"
+              handleClick={handleCancel}
+            >
+              Cancel
+            </CustomButton1>
+          </div>
+        </form>
       </div>
     </Model>
   );

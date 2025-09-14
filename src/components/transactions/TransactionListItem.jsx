@@ -8,12 +8,13 @@ import {
   ArrowUpRight,
   Ellipsis,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteTransaction } from "../../app/state/state.transactions";
 import { format, parseISO } from "date-fns";
 
 import { EditTxn } from "./EditTransaction";
 import ExpandedView from "./ExpandedView";
+import toast from "react-hot-toast";
 
 export const TransactionItem = ({ transaction }) => {
   const dispatch = useDispatch();
@@ -22,13 +23,20 @@ export const TransactionItem = ({ transaction }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef();
 
+  const categories = useSelector((state) => state.categories);
+
+  const TxnCategory = categories.find((c) => c.id === transaction.category.id);
+
   const toggleExpanded = () => setIsExpanded((prev) => !prev);
   const openEdit = () => setIsEditing(true);
   const closeEdit = () => setIsEditing(false);
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this transaction?")) {
-      dispatch(deleteTransaction(transaction.id));
+  const handleDelete = (id) => {
+    try {
+      dispatch(deleteTransaction({ id }));
+    } catch (error) {
+      toast.error("Failed to delete");
+      console.error(error);
     }
   };
 
@@ -51,19 +59,18 @@ export const TransactionItem = ({ transaction }) => {
   const isSelf = transaction.type === "self";
 
   const TableRow = ({ children }) => (
-    <div className="grid grid-cols-8  md:grid-cols-12 items-center  gap text-xs sm:text-sm md:text-base">
+    <div className="grid grid-cols-8  md:grid-cols-11 items-center  gap text-xs sm:text-sm md:text-base">
       {children}
     </div>
   );
   const TableCell = ({ children, customClass, customRef }) => (
     <div
       ref={customRef}
-      className={` py-1 px-1  md:py-2 col-span-1 ${customClass}`}
+      className={` py-1 px-1 text-wrap md:py-2 col-span-1 ${customClass}`}
     >
       {children}
     </div>
   );
-
   // GridDate was another version of Transactions Item without tables layout
   // const GridData = () => {
   //   return (
@@ -150,7 +157,7 @@ export const TransactionItem = ({ transaction }) => {
   //     </>
   //   );
   // };
- 
+
   const ActionsMenu = () => (
     <div className="absolute top-5 right-0 mt-2 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-10">
       <button
@@ -165,7 +172,7 @@ export const TransactionItem = ({ transaction }) => {
       <button
         className="w-full text-left px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600"
         onClick={() => {
-          handleDelete();
+          handleDelete(transaction.id);
           setIsMenuOpen(false);
         }}
       >
@@ -183,6 +190,7 @@ export const TransactionItem = ({ transaction }) => {
       >
         {/* Row */}
         <TableRow>
+          {/* Type arrorw */}
           <TableCell customClass={"text-xs  text-center md:text-lg"}>
             {isSelf ? (
               <ArrowRightLeft className="text-indigo-500 mx-auto " />
@@ -192,12 +200,13 @@ export const TransactionItem = ({ transaction }) => {
               <ArrowUpRight className="text-red-600 mx-auto " />
             )}
           </TableCell>
-
-          <TableCell customClass={"md:col-span-2 text-gray-500"}>
+          {/* date */}
+          <TableCell customClass={"md:col-span-1 text-gray-500"}>
             {transaction.date
-              ? format(parseISO(transaction.date), "MMM d, yyyy")
+              ? format(parseISO(transaction.date), "MMM d ")
               : "—"}
           </TableCell>
+          {/* description */}
           <TableCell
             customClass={
               "col-span-2 md:col-span-3  font-semibold text-gray-900 truncate  wrap-break-word"
@@ -205,9 +214,14 @@ export const TransactionItem = ({ transaction }) => {
           >
             {transaction.description || "No Description"}
           </TableCell>
-          <TableCell customClass={" md:col-span-2  text-gray-700"}>
-            {transaction.category?.name || "—"}
+          {/* category */}
+          <TableCell customClass={" md:col-span-2 flex text-gray-700"}>
+            <span className="md: ">{TxnCategory?.Icon || ""}</span>
+            <span className="hidden md:flex">
+              {TxnCategory?.category || "—"}
+            </span>
           </TableCell>
+          {/* account */}
           <TableCell customClass={"  md:col-span-2 text-gray-700 truncate"}>
             {isSelf
               ? `${transaction.fromAccount?.name || "—"} → ${
@@ -215,6 +229,7 @@ export const TransactionItem = ({ transaction }) => {
                 }`
               : transaction.account?.name || "—"}
           </TableCell>
+          {/* amount */}
           <TableCell
             customClass={`  text-center   font-bold ${
               isSelf
@@ -235,11 +250,11 @@ export const TransactionItem = ({ transaction }) => {
               </>
             )}
           </TableCell>
+          {/* Actions */}
           <TableCell
             customRef={menuRef}
             customClass={`relative flex justify-center`}
           >
-            {" "}
             <button
               className="p-1 rounded hover:bg-gray-200 transition-colors"
               onClick={toggleMenu}

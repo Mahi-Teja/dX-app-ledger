@@ -5,6 +5,8 @@ import { Button1 } from "../buttons/button1";
 import { addTransaction } from "../../app/state/state.transactions";
 import { selfTransactionAmount } from "../../app/state/state.accounts";
 import { addCategory } from "../../app/state/state.categories";
+import toast from "react-hot-toast";
+import { createCategory } from "../../utils/create.helpers";
 
 const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
   const dispatch = useDispatch();
@@ -45,18 +47,13 @@ const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
 
     // ✅ ensure "Self Transaction" category exists
     let selfCategory = categories.find(
-      (c) => c.name === "Self Transaction" && c.type === "self"
+      (c) => c.category === "Self" && c.type === "self"
     );
     if (!selfCategory) {
-      selfCategory = {
-        id: Date.now().toString(),
-        category: "Self",
-        icon: "self",
-        type: "self",
-      };
+      selfCategory = createCategory("self", "Self", "🔄");
+
       dispatch(addCategory(selfCategory));
     }
-    
 
     // ✅ create transaction object
     const newSelfTxn = {
@@ -87,6 +84,7 @@ const SelfTxn = ({ selectedDate, setOpenAddTxn }) => {
         type: "self",
       })
     );
+    toast.success("Self transaction Added.");
 
     reset();
     setOpenAddTxn(false);

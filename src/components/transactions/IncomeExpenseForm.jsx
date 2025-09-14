@@ -45,7 +45,7 @@ const IncomeExpenseForm = ({
       accountId: "",
     },
   });
-
+ 
   const onSubmit = (data) => {
     // Manual validation
     if (!data.description) {
@@ -116,7 +116,7 @@ const IncomeExpenseForm = ({
       ? dispatch(debitAmountToAccount(accPayload))
       : dispatch(creditAmountToAccount(accPayload));
 
-    toast.success("Transaction Added.", { position: "bottom-right" });
+    toast.success("Transaction Added.");
     setOpenAddTxn(false);
   };
 
@@ -230,6 +230,7 @@ const IncomeExpenseForm = ({
 
       {showAddCategoryModal && (
         <AddCategoryModal
+        defaultType={type}
           onClose={() => setShowAddCategoryModal(false)}
           onCancel={() => {
             setShowAddCategoryModal(false);
@@ -240,6 +241,7 @@ const IncomeExpenseForm = ({
 
       {showAddAccountModal && (
         <AddAccountModel
+        
           onClose={() => setShowAddAccountModal(false)}
           onCancel={() => {
             setShowAddAccountModal(false);
