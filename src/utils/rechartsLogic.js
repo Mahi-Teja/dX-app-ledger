@@ -1,8 +1,6 @@
-import txn from "../utils/sample_transactions.json";
 import { MONTHS_LIST } from "./constants";
 
-export const getCategoryWiseTotals = (transactions = txn) => {
-  // const transactions = txn
+export const getCategoryWiseTotals = (transactions = []) => {
   const data = transactions.reduce((acc, transactions) => {
     const catId = transactions.category.id;
     // If this category is not yet in acc, initialize it
